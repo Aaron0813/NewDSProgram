@@ -142,8 +142,9 @@ void OutputAdjMatrix(Graph &graph) {
 }
 
 //输出导游路线图
-void CreateTourSortGraph(Graph &graph) {
+void CreateTourSortGraph(Graph &graph, Graph &tour_graph) {
     string *vex = DFSTraverse(graph);
+
     /**
      * 测试深度优先遍历结果
     for (int i = 0; i < graph.num_vertices; i++) {
@@ -165,36 +166,52 @@ void CreateTourSortGraph(Graph &graph) {
     int n = 0;
 
     //建立导游路线图
-    for(int i=0;i<graph.num_vertices-1;i++){
-        cout<<"IsEdge(graph,"<<vex[i]<<","<<vex[i+1]<<") "<<IsEdge(graph,vex[i],vex[i+1])<<"  "<<"i=  "<<i<<endl;
-        if(IsEdge(graph,vex[i],vex[i+1])){//如果两个顶点之间有边，那么直接将这两个顶点存入路线数组始中
-            if(i!=10){
-                tour_map[n++]=vex[i];
+    for (int i = 0; i < graph.num_vertices - 1; i++) {
+        cout << "IsEdge(graph," << vex[i] << "," << vex[i + 1] << ") " << IsEdge(graph, vex[i], vex[i + 1]) << "  "
+             << "i=  " << i << endl;
+        if (IsEdge(graph, vex[i], vex[i + 1])) {//如果两个顶点之间有边，那么直接将这两个顶点存入路线数组中
+            if (i != graph.num_vertices - 2) {
+                tour_map[n++] = vex[i];
 
-            }else{
-                tour_map[n++]=vex[i];
-                tour_map[n++]=vex[i+1];
-                cout<<"vex[i+1]"<<vex[i+1]<<endl;
+            } else {
+                tour_map[n++] = vex[i];
+                tour_map[n++] = vex[i + 1];
+                cout << "vex[i+1]" << vex[i + 1] << endl;
 
             }
-        }else{
-            int temp_i=i;
+        } else {
+            int temp_i = i;
             //存入仙武湖
-            tour_map[n++]=vex[i];
-            while(!IsEdge(graph,vex[--temp_i],vex[i+1])){//只要两个顶点之间没有边
-                tour_map[n++]=vex[temp_i];//将前一个顶点加入到导游了路线图中
-                cout<<"temp_i  "<<temp_i<<"    "<<vex[temp_i]<<endl;
+            tour_map[n++] = vex[i];
+            while (!IsEdge(graph, vex[--temp_i], vex[i + 1])) {//只要两个顶点之间没有边
+                tour_map[n++] = vex[temp_i];//将前一个顶点加入到导游了路线图中
+//                cout<<"temp_i  "<<temp_i<<"    "<<vex[temp_i]<<endl;
             }
-            tour_map[n++]=vex[temp_i];
-            cout<<"temp_i->"<<temp_i<<endl;
+            tour_map[n++] = vex[temp_i];
+//            cout<<"temp_i->"<<temp_i<<endl;
         }
-}
+    }
+
+    /**
+     * 测试导游路线图是否正确
 
     cout << "运行结束,n=" <<n<< endl;
     for (int m = 0; m < n; m++) {
         cout<<tour_map[m]<<"->";
     }
+*/
+    CreateTourGraph(graph, tour_graph, tour_map);
 
+}
+
+void CreateTourGraph(Graph &graph, Graph &tour_graph, string tour_map[]) {
+    //初始化导游图
+    for (int i = 0; i < graph.num_vertices; i++) {
+        tour_graph.node_table[i].name = graph.node_table[i].name;
+        tour_graph.node_table[i].adj = NULL;
+    }
+    int tour_edges = 0;
+//    for()
 }
 
 //深度优先遍历算法-递归的入口函数---找了半天错误，居然发现是因为routes.txt文件多了一个空行。。。
@@ -291,7 +308,7 @@ bool IsEdge(Graph graph, string v1, string v2) {
     int i = GetVertexPos(graph, v1);
     //获取顶点v2在邻接表中的坐标位置
     int j = GetVertexPos(graph, v2);
-    for (Edge *edge= graph.node_table[i].adj; edge; edge = edge->link) {
+    for (Edge *edge = graph.node_table[i].adj; edge; edge = edge->link) {
         if (j == edge->dest)
             return true;
 //        else{
@@ -299,4 +316,13 @@ bool IsEdge(Graph graph, string v1, string v2) {
 //        }
     }
     return false;
+}
+
+//查找一张图所有节点的入度数
+void FindInDegree(Graph graph, int indegree[]) {
+    Edge *edge = new Edge;
+    for (int i = 0; i < graph.num_vertices; i++)
+        for (edge = graph.node_table[i].adj; edge; edge = edge->link)
+            indegree[edge->dest]++;
+    delete edge;
 }

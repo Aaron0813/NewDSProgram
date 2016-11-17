@@ -27,7 +27,7 @@ struct Edge {
     Edge *link;
 
     //默认两点之间的不可达
-    Edge() : distance(INFINITY),link(NULL) {}
+    Edge() : distance(INFINITY), link(NULL) {}
 
     Edge(int d, int dis, int t, Edge *edge) : dest(d), distance(dis), time_consume(t), link(edge) {}
 
@@ -84,23 +84,28 @@ int GetVertexPos(Graph &graph, string &name);
 void OutputAdjMatrix(Graph &graph);
 
 //输出导游路线图
-void CreateTourSortGraph(Graph & graph);
+void CreateTourSortGraph(Graph &graph, Graph &tour_graph);
 
 //深度优先遍历算法-递归的入口函数
-string* DFSTraverse(Graph & graph);
+string *DFSTraverse(Graph &graph);
 
 //深度优先遍历算法--递归
-void DFS(Graph &graph,int v,int visited[],string *vertex,int &num);
+void DFS(Graph &graph, int v, int visited[], string *vertex, int &num);
 
 //获取节点v的第一个邻接顶点
-int GetFirstNeighbor(Graph &graph,int v);
+int GetFirstNeighbor(Graph &graph, int v);
 
 //获取节点v排在w后面的下一个邻接顶点
-int GetNextNeighbor(Graph &graph,int v,int w);
+int GetNextNeighbor(Graph &graph, int v, int w);
 
 //判断要查的这两个顶点之间是否有直接相连的边
-bool IsEdge(Graph graph,string v1,string v2);
+bool IsEdge(Graph graph, string v1, string v2);
 
+//查找一个图中的所有节点的入度数
+void FindInDegree(Graph graph, int indegree[]);
+
+//根据深度优先遍历的结果创建一个图--暂时不写
+void CreateTourGraph(Graph &graph, Graph &tour_graph, string tour_map[]);
 ////判断图是否为空
 //int GraphEmpty(Graph & graph)const {return graph.num_vertices==0;}
 ////判断图的节点数是否已经达到最大上限
