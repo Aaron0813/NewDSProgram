@@ -44,11 +44,14 @@ void LoadGraph(Graph &graph) {
     inf1.close();
 
     /**
-     * 测试节点信息是否存入正确
+     * 测试节点信息是否存入正确*/
 
-    for(int j=0;j<i;j++)
-        cout<<(graph.node_table[j].name)<<" "<<(graph.node_table[j].description)<<endl;
-    */
+    for (int m = 0; m < i; m++) {
+        cout << m << "  " << (graph.node_table[m].name) << " " << (graph.node_table[m].description) << endl;
+    }
+
+//        cout<<j<<"  "<<(graph.node_table[j].name)<<" "<<(graph.node_table[j].description)<<endl;
+
 
 
     //存入路径信息
@@ -127,7 +130,10 @@ void OutputAdjMatrix(Graph &graph) {
     graph.adj_matrix = a;
 //    cout<<"转换成功"<<endl;
 
-    //输出邻接矩阵的信息
+
+    /**
+     * 测试输出邻接矩阵的信息是否正确
+
     for (int i = 0; i < num_vertices; ++i)//打印第一行
         cout << "\t" << graph.node_table[i].name;
     cout << endl;
@@ -138,6 +144,7 @@ void OutputAdjMatrix(Graph &graph) {
             cout << a[i][j] << "\t";
         cout << endl;
     }
+     */
     delete[]edge;
 }
 
@@ -147,12 +154,13 @@ void CreateTourSortGraph(Graph &graph, Graph &tour_graph) {
 
     /**
      * 测试深度优先遍历结果
+    cout<<"深度优先边路结果"<<endl;
     for (int i = 0; i < graph.num_vertices; i++) {
         cout << vex[i] << "->";
     }
     cout << endl;
     cout<<"深度优先遍历结束"<<endl;
-      */
+*/
     string tour_map[2 * graph.num_vertices];
 //    cout<<"size 大小为"<<tour_map->size()<<endl;//size返回的到底是什么
 //    tour_map[0]="1";
@@ -167,8 +175,8 @@ void CreateTourSortGraph(Graph &graph, Graph &tour_graph) {
 
     //建立导游路线图
     for (int i = 0; i < graph.num_vertices - 1; i++) {
-        cout << "IsEdge(graph," << vex[i] << "," << vex[i + 1] << ") " << IsEdge(graph, vex[i], vex[i + 1]) << "  "
-             << "i=  " << i << endl;
+//        cout << "IsEdge(graph," << vex[i] << "," << vex[i + 1] << ") " << IsEdge(graph, vex[i], vex[i + 1]) << "  "
+//             << "i=  " << i << endl;
         if (IsEdge(graph, vex[i], vex[i + 1])) {//如果两个顶点之间有边，那么直接将这两个顶点存入路线数组中
             if (i != graph.num_vertices - 2) {
                 tour_map[n++] = vex[i];
@@ -176,7 +184,7 @@ void CreateTourSortGraph(Graph &graph, Graph &tour_graph) {
             } else {
                 tour_map[n++] = vex[i];
                 tour_map[n++] = vex[i + 1];
-                cout << "vex[i+1]" << vex[i + 1] << endl;
+//                cout << "vex[i+1]" << vex[i + 1] << endl;
 
             }
         } else {
@@ -196,6 +204,7 @@ void CreateTourSortGraph(Graph &graph, Graph &tour_graph) {
      * 测试导游路线图是否正确
 
     cout << "运行结束,n=" <<n<< endl;
+    cout<<"导游路线图结果"<<endl;
     for (int m = 0; m < n; m++) {
         cout<<tour_map[m]<<"->";
     }
@@ -325,4 +334,87 @@ void FindInDegree(Graph graph, int indegree[]) {
         for (edge = graph.node_table[i].adj; edge; edge = edge->link)
             indegree[edge->dest]++;
     delete edge;
+}
+
+//查找一张图中是否有回路
+void FindLoop(Graph &graph) {
+
+}
+
+void MiniDistance(Graph &graph) {
+    string start_view, end_view;
+    cout << "请输入要查找的两个景点名称" << endl;
+    cin >> start_view >> end_view;
+    int v = GetVertexPos(graph, start_view);
+    int w = GetVertexPos(graph, end_view);
+    //运用Dijkstra算法计算两点之间的最短路径及其距离花费
+    Dijkstra(graph, v, w);
+}
+
+void Dijkstra(Graph &graph, int v, int w) {
+    //获取图的节点数
+    int num_vertices = graph.num_vertices;
+    //最短路径长度数组---v到该节点的目前最短路径长度
+    int dist[num_vertices];
+    //当前节点的前一个节点
+    int path[num_vertices];
+    //最短路径顶点集---标志已经找到最短路径的顶点集
+    int s[num_vertices];
+
+    for (int i = 0; i < num_vertices; i++) {
+        dist[i] = graph.adj_matrix[v][i];
+        s[i] = 0;
+        //只要两点之间不是不可达，暂记其余顶点的前一个顶点为v
+        if (i != v && dist[i] < INFINITY)
+            path[i] = v;
+        else
+            path[i] = -1;
+    }
+    //顶点v加入顶点集合
+    s[v] = 1;
+    dist[v] = 0;
+    //选择当前不在集合S中具有最短路径的顶点u
+    for (int i = 0; i < num_vertices - 1; i++) {
+        int min = INFINITY;
+        int u = v;
+        //找一个当前所有可达路径中花费最小的顶点u
+        for (int j = 0; j < num_vertices; j++)
+            if (!s[j] && dist[j] < min) {
+                u = j;
+                min = dist[j];
+            }
+        //将顶点u加入集合s
+        s[u] = 1;
+        for (int k = 0; k < num_vertices; k++)//修改
+            if (!s[k] && graph.adj_matrix[u][k] < INFINITY && dist[u] + graph.adj_matrix[u][k] < dist[k]) {
+                dist[k] = dist[u] + graph.adj_matrix[u][k];
+                path[k] = u;
+            }
+    }
+    stack<int> temp_stack;
+    int temp = path[w];
+    temp_stack.push(w);
+    while (v != temp) {
+        temp_stack.push(temp);
+        temp = path[temp];
+    }
+    temp_stack.push(v);
+//    int m=0;
+//    int tour_path[num_vertices];
+//    while(v!=temp){
+//        temp_stack.push(temp);
+//        temp=path[temp];
+//    }
+//    cout<<path[w]<<" "<<path[path[w]];
+//    for(int i=0;i<num_vertices;i++)
+//        cout<<path[i]<<"->";
+//    cout<<endl;
+//    cout<<
+    while (!temp_stack.empty()) {
+        temp = temp_stack.top();
+        cout << graph.node_table[temp].name << "-->";
+        temp_stack.pop();
+    }
+    cout << endl << "最短距离为  " << dist[w] << endl;
+
 }

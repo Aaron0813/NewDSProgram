@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <stack>
 
 using namespace std;
 
@@ -106,6 +107,15 @@ void FindInDegree(Graph graph, int indegree[]);
 
 //根据深度优先遍历的结果创建一个图--暂时不写
 void CreateTourGraph(Graph &graph, Graph &tour_graph, string tour_map[]);
+
+//查找一张图中是否有回路
+void FindLoop(Graph &graph);
+
+//求两个景点之间的最短路径及其距离
+void MiniDistance(Graph &graph);
+
+//具体计算顶点v与w之间的最短路径及距离的算法---DIJKSTRA
+void Dijkstra(Graph &graph, int v, int w);
 ////判断图是否为空
 //int GraphEmpty(Graph & graph)const {return graph.num_vertices==0;}
 ////判断图的节点数是否已经达到最大上限
