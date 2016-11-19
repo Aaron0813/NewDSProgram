@@ -44,12 +44,12 @@ void LoadGraph(Graph &graph) {
     inf1.close();
 
     /**
-     * 测试节点信息是否存入正确*/
+     * 测试节点信息是否存入正确
 
     for (int m = 0; m < i; m++) {
         cout << m << "  " << (graph.node_table[m].name) << " " << (graph.node_table[m].description) << endl;
     }
-
+*/
 //        cout<<j<<"  "<<(graph.node_table[j].name)<<" "<<(graph.node_table[j].description)<<endl;
 
 
@@ -362,7 +362,7 @@ void Dijkstra(Graph &graph, int v, int w) {
     int s[num_vertices];
 
     for (int i = 0; i < num_vertices; i++) {
-        dist[i] = graph.adj_matrix[v][i];
+        dist[i] = (int) graph.adj_matrix[v][i];
         s[i] = 0;
         //只要两点之间不是不可达，暂记其余顶点的前一个顶点为v
         if (i != v && dist[i] < INFINITY)
@@ -387,7 +387,7 @@ void Dijkstra(Graph &graph, int v, int w) {
         s[u] = 1;
         for (int k = 0; k < num_vertices; k++)//修改
             if (!s[k] && graph.adj_matrix[u][k] < INFINITY && dist[u] + graph.adj_matrix[u][k] < dist[k]) {
-                dist[k] = dist[u] + graph.adj_matrix[u][k];
+                dist[k] = (int) (dist[u] + graph.adj_matrix[u][k]);
                 path[k] = u;
             }
     }
@@ -417,5 +417,155 @@ void Dijkstra(Graph &graph, int v, int w) {
         temp_stack.pop();
     }
     cout << endl << "最短距离为  " << dist[w] << endl;
+
+}
+
+//生成最小生成树
+void MiniSpanTree(Graph &graph, string u) {
+    //获取起始点在图中链表的位置
+    int v = GetVertexPos(graph, u);
+//    cout<<" 最小生成树的起点"<<v<<endl;
+    Prim(graph, v);
+
+}
+
+//使用Prim算法生成最小生成树
+void Prim(Graph &graph, int v) {
+    //图中的顶点数
+    int num_vertices = graph.num_vertices;
+    //记录最小花费
+    int *low_cost = new int[num_vertices];
+    //记录顶点的相邻节点
+    int *near_vex = new int[num_vertices];
+
+    for (int i = 0; i < num_vertices; i++) {
+        //记录顶点v到各点的代价
+        if (i != v) {
+            low_cost[i] = graph.adj_matrix[v][i];
+            near_vex[i] = 0;
+        }
+
+    }
+    //顶点v加到生成树顶点集合
+    near_vex[v] = -1;
+    low_cost[v] = 0;
+//    cout<<"near_vex[v]=-1;";
+    //定义一个最小生成树结点作为辅助单元
+    MSTEdgeNode e;
+    //存储生成树边的数组
+    MSTEdgeNode *edgeNode = new MSTEdgeNode[num_vertices - 1];
+    for (int i = 1; i < num_vertices; i++) {
+        //循环num_vertices-1次，加入num_vertices-1边
+        int min = INFINITY;
+        int temp = 0;
+        for (int j = 0; j < num_vertices; j++)
+            if (near_vex[j] != -1 && low_cost[j] < min) {
+                temp = j;
+                min = low_cost[j];
+            }
+        //求生成树以外的顶点到生成树内部的顶点所具有的最小权值的边，temp是当前具有最小权值边的位置
+        if (temp) {//temp==0表示再也找不到符合要求的顶点了
+            e.tail = near_vex[temp];
+            e.head = temp;
+            e.cost = low_cost[temp];
+            edgeNode[i - 1] = e;//将选出的边加入生成树中
+            near_vex[temp] = -1;//将改变标记已经加入到生成树中
+            for (int j = 1; j < num_vertices; j++)
+                if (near_vex[j] != -1 && graph.adj_matrix[temp][j] < low_cost[j]) {//如果边不在生成树中则需要进行修改
+                    low_cost[j] = graph.adj_matrix[temp][j];
+                    near_vex[j] = temp;
+                }
+        }
+    }
+
+
+    //输出最小生成树的结果
+//    cout<<"输出最小生成树的结果";
+//    MSTEdgeNode e;
+    string start;
+    string departure;
+    for (int i = 0; i < num_vertices - 1; i++) {
+        e = edgeNode[i];
+        start = graph.node_table[e.head].name;
+        departure = graph.node_table[e.tail].name;
+//        cout << e.head << "->" << e.tail << "->" << e.cost << endl;
+
+//        start=(graph.node_table[e.head].name);
+        cout << "从  " << start << "  修一条到  " << departure << "的道路  " << endl;
+    }
+
+}
+
+//排序功能的主函数入口
+void Sort(Graph &graph) {
+    int choose;
+    cout << "1.根据景点欢迎度排序" << endl;
+    cout << "2.根据景点岔路数排序" << endl;
+    cout << "      请选择" << endl;
+    cin >> choose;
+    switch (choose) {
+        case 1:
+            SortByPopularDegree(graph);
+            break;
+        case 2:
+            SortByForks(graph);
+            break;
+    }
+
+}
+
+//根据欢迎度排序
+void SortByPopularDegree(Graph &graph) {
+    //获取图中欢迎度的数据
+    int popular_degree[graph.num_vertices];
+    for (int i = 0; i < graph.num_vertices; i++)
+        popular_degree[i] = graph.node_table[i].popular_degree;
+//    cout<< "数组大小为  ："<<(sizeof(popular_degree)/ sizeof(popular_degree[0]))<<endl;
+
+    int choose;
+    cout << "1.冒泡排序" << endl;
+    cout << "2.快速排序" << endl;
+    cout << "3.归并排序" << endl;
+    cout << "  请选择" << endl;
+    cin >> choose;
+    switch (choose) {
+        case 1:
+            BubbleSort(popular_degree);
+            break;
+        case 2:
+            QuickSort(popular_degree);
+            break;
+        case 3:
+            MergeSort(popular_degree);
+            break;
+    }
+
+}
+
+//根据岔路数排序
+void SortByForks(Graph &graph) {
+
+}
+
+//冒泡排序---形参改一下，改成名称和权值的数组---》没必要，数组下标代表景点名称
+void BubbleSort(int popular_degree[]) {
+    int size = sizeof(popular_degree) / sizeof(popular_degree[0]);
+    int i, j, temp;
+    for (i = 0; i < size; i++)
+        for (j = i; j < size - 1; j++)
+            if (popular_degree[j] < popular_degree[j + 1]) {
+                temp = popular_degree[j + 1];
+                popular_degree[j + 1] = popular_degree[j];
+                popular_degree[j] = temp;
+            }
+}
+
+//快速排序
+void QuickSort(int popular_degree[]) {
+
+}
+
+//归并排序
+void MergeSort(int popular_degree[]) {
 
 }

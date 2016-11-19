@@ -72,6 +72,12 @@ struct Graph {
 //    ~Graph();
 };
 
+//最小生成树边结点的结构体定义
+struct MSTEdgeNode {
+    int head, tail;  //生成树各边的两个顶点
+    int cost;       //生成树各边的代价
+};
+
 //展示菜单目录
 void ShowMenu();
 
@@ -116,6 +122,30 @@ void MiniDistance(Graph &graph);
 
 //具体计算顶点v与w之间的最短路径及距离的算法---DIJKSTRA
 void Dijkstra(Graph &graph, int v, int w);
+
+//生成最小生成树的算法
+void MiniSpanTree(Graph &graph, string u);
+
+//使用Prim生成最小生成树
+void Prim(Graph &graph, int v);
+
+//排序功能的主函数入口
+void Sort(Graph &graph);
+
+//根据欢迎度排序
+void SortByPopularDegree(Graph &graph);
+
+//根据岔路数排序
+void SortByForks(Graph &graph);
+
+//冒泡排序
+void BubbleSort(int popular_degree[]);
+
+//快速排序
+void QuickSort(int popular_degree[]);
+
+//归并排序
+void MergeSort(int popular_degree[]);
 ////判断图是否为空
 //int GraphEmpty(Graph & graph)const {return graph.num_vertices==0;}
 ////判断图的节点数是否已经达到最大上限
