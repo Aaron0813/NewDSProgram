@@ -2,6 +2,7 @@
 // Created by Aaron on 2016/11/14.
 //
 
+#include <cstring>
 #include "preDefine.h"
 
 void ShowMenu() {
@@ -516,11 +517,15 @@ void Sort(Graph &graph) {
 
 //根据欢迎度排序
 void SortByPopularDegree(Graph &graph) {
-    //获取图中欢迎度的数据
-    int popular_degree[graph.num_vertices];
-    for (int i = 0; i < graph.num_vertices; i++)
-        popular_degree[i] = graph.node_table[i].popular_degree;
-//    cout<< "数组大小为  ："<<(sizeof(popular_degree)/ sizeof(popular_degree[0]))<<endl;
+    //获取图中欢迎度的数据及其下标
+//    int popular_degree[graph.num_vertices][2];
+    SortNode sortNodes[graph.num_vertices];
+    for (int i = 0; i < graph.num_vertices; i++) {
+//        popular_degree[i][0] = graph.node_table[i].popular_degree;
+//        popular_degree[i][1] = i;
+        sortNodes[i].value = graph.node_table[i].popular_degree;
+        sortNodes[i].name = graph.node_table[i].name;
+    }
 
     int choose;
     cout << "1.冒泡排序" << endl;
@@ -530,13 +535,21 @@ void SortByPopularDegree(Graph &graph) {
     cin >> choose;
     switch (choose) {
         case 1:
-            BubbleSort(popular_degree);
+            BubbleSort(sortNodes, graph.num_vertices);
+            cout << "针对景点受欢迎程度进行冒泡排序的结果为：" << endl;
+            cout << "景点名称\t" << "景点受欢迎度\t" << endl;
+            for (int i = 0; i < graph.num_vertices; i++)
+                cout << sortNodes[i].name << "\t\t" << sortNodes[i].value << endl;
             break;
         case 2:
-            QuickSort(popular_degree);
+            QuickSort(sortNodes, 0, 11);
+            cout << "针对景点受欢迎程度进行冒泡排序的结果为：" << endl;
+            cout << "景点名称\t" << "景点受欢迎度\t" << endl;
+            for (int i = 0; i < graph.num_vertices; i++)
+                cout << sortNodes[i].name << "\t\t" << sortNodes[i].value << endl;
             break;
         case 3:
-            MergeSort(popular_degree);
+//            MergeSort(popular_degree);
             break;
     }
 
@@ -544,28 +557,222 @@ void SortByPopularDegree(Graph &graph) {
 
 //根据岔路数排序
 void SortByForks(Graph &graph) {
+    SortNode sortNodes[graph.num_vertices];
+    for (int i = 0; i < graph.num_vertices; i++) {
+        int j = 0;
+        for (Edge *edge = graph.node_table[i].adj; edge; edge = edge->link)
+            j++;//记录当前节点的岔路数
+        sortNodes[i].value = j;
+        sortNodes[i].name = graph.node_table[i].name;
+    }
+
+
+    int choose;
+    cout << "1.冒泡排序" << endl;
+    cout << "2.快速排序" << endl;
+    cout << "3.归并排序" << endl;
+    cout << "  请选择" << endl;
+    cin >> choose;
+    switch (choose) {
+        case 1:
+            BubbleSort(sortNodes, graph.num_vertices);
+            cout << "针对景点岔路数进行快速排序的结果为：" << endl;
+            cout << "景点名称\t" << "景点岔路数\t" << endl;
+            for (int i = 0; i < graph.num_vertices; i++)
+                cout << sortNodes[i].name << "\t\t" << sortNodes[i].value << endl;
+            break;
+        case 2:
+            QuickSort(sortNodes, 0, 11);
+            cout << "针对景点岔路数进行快速排序的结果为：" << endl;
+            cout << "景点名称\t" << "景点岔路数\t" << endl;
+            for (int i = 0; i < graph.num_vertices; i++)
+                cout << sortNodes[i].name << "\t\t" << sortNodes[i].value << endl;
+            break;
+        case 3:
+//            MergeSort(popular_degree);
+            break;
+    }
 
 }
 
 //冒泡排序---形参改一下，改成名称和权值的数组---》没必要，数组下标代表景点名称
-void BubbleSort(int popular_degree[]) {
-    int size = sizeof(popular_degree) / sizeof(popular_degree[0]);
-    int i, j, temp;
-    for (i = 0; i < size; i++)
-        for (j = i; j < size - 1; j++)
-            if (popular_degree[j] < popular_degree[j + 1]) {
-                temp = popular_degree[j + 1];
-                popular_degree[j + 1] = popular_degree[j];
-                popular_degree[j] = temp;
+void BubbleSort(SortNode sortNodes[], int size) {
+
+    cout << "size= " << size << endl;
+
+    int i, j;
+    for (i = 0; i < size - 1; i++)
+        for (j = 0; j < size - i - 1; j++)
+            if (sortNodes[j].value < sortNodes[j + 1].value) {
+                Swap(sortNodes[j], sortNodes[j + 1]);
             }
+
 }
 
 //快速排序
-void QuickSort(int popular_degree[]) {
+void QuickSort(SortNode sortNode[], int left, int right) {
+    if (left < right) {
+        //划分
+        int pivot = Partition(sortNode, left, right);
+        //在左自取件递归进行快速排序
+        QuickSort(sortNode, left, pivot - 1);
+        //在右子区间递归进行快速排序
+        QuickSort(sortNode, pivot + 1, right);
+    }
+}
 
+//快速排序的辅助函数
+int Partition(SortNode sortNode[], int left, int right) {
+    //取最左边的数为排序的基准
+    int pivot = left;
+    Swap(sortNode[left], sortNode[(left + right) / 2]);
+    SortNode standard = sortNode[left];
+    for (int i = left + 1; i <= right; i++)
+        if (sortNode[i].value > standard.value && ++pivot != i)
+            Swap(sortNode[pivot], sortNode[i]);
+    Swap(sortNode[left], sortNode[pivot]);
+    return pivot;
+}
+
+//交换两个数
+void Swap(SortNode &node1, SortNode &node2) {
+    SortNode temp = node2;
+    node2 = node1;
+    node1 = temp;
 }
 
 //归并排序
-void MergeSort(int popular_degree[]) {
+void MergeSort(int popular_degree[][2], int size) {
 
 }
+
+//查找的主函数---输入一个字符串，使用KMP分别遍历景点的名称以及景点的描述
+void Search(Graph &graph) {
+    string key_word;
+    char target[2048];
+    memset(target, 0, 2048);
+    char pattern[2048];
+    memset(pattern, 0, 2048);
+//    char pattern2[2014];
+    cout << "请输入要查找的关键字" << endl;
+    cin >> key_word;
+
+//    key_word.
+    strcpy(target, key_word.c_str());
+    /////////////////////////////////////////
+//    int m=0;
+//    while('\0'!=target[m]){
+//        cout<<target[m];
+//        m++;
+//    }
+    /////////////////////////////////////
+    //遍历所有景点的名称以及其简介
+    int i = 0;
+    for (; i < graph.num_vertices; i++) {
+
+        strcpy(pattern, graph.node_table[i].name.c_str());
+//        //////////////////////////////////////////
+//        int m=0;cout<<"景点名称为 is";
+//        while('\0'!=pattern[m]){
+//            cout<<pattern[m];
+//            m++;
+//        }
+//
+
+        ////////////////////////////////////////////
+        if (KMPSearch(target, pattern) == 1) {
+            cout << graph.node_table[i].description << endl;
+            break;
+        }
+        memset(pattern, 0, 2048);
+        strcpy(pattern, graph.node_table[i].description.c_str());
+        ///////////////////////////////////////
+//        m=0;cout<<"景点简介为 is";
+//        while('\0'!=pattern[m]){
+//            cout<<pattern[m];
+//            m++;
+//        }
+        //////////////////////////////////////
+        if (KMPSearch(target, pattern) == 1) {
+            cout << graph.node_table[i].description << endl;
+            break;
+        }
+    }
+    if (i == graph.num_vertices)
+        cout << "未查找到所要信息，请重新输入" << endl;
+
+}
+
+//使用KMP算法进行查找关键字的查找
+int KMPSearch(char target[], char pattern[]) {
+    int prefix[256];
+    int target_length = 0;
+    int pattern_length = 0;
+
+//    cout<<"进入KMP主算法"<<endl;
+    //计算两个数组的长度
+    while ('\0' != target[target_length])
+        target_length++;
+    while ('\0' != pattern[pattern_length])
+        pattern_length++;
+
+//    cout<<"target_length  "<<target_length<<"   pattern_length  "<<pattern_length<<endl;
+//    //////////////////////////////
+//    int m=0;cout<<"pattern 的内容 is  ";
+//    while('\0'!=pattern[m]){
+//        cout<<pattern[m];
+//        m++;
+//    }
+
+
+    /////////////////////////////
+    //计算关键字的前缀数组
+    CptPfFunc(pattern, prefix);
+    /////////////////////////////
+//     m=1;cout<<"前缀函数 is  ";
+//    while('\0'!=prefix[m]){
+//        cout<<prefix[m];
+//        m++;
+//    }
+    ////////////////////////
+    //已经匹配的字符个数
+    int nocm = 0;
+    for (int i = 0; i < target_length; i++) {
+        while (nocm > 0 && pattern[nocm] != target[i])
+            nocm = prefix[nocm];
+        if (pattern[nocm] == target[i])
+            nocm++;
+        if (nocm == pattern_length) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+//计算模式串前缀的函数
+void CptPfFunc(char pattern[], int prefix[]) {
+    int length_pattern = 0;
+    //计算模式串的长度
+    while ('\0' != pattern[length_pattern])
+        length_pattern++;
+//    ///////////////////////////
+//    int m=0;cout<<"CptPfFunc   pattern 的内容 is  ";
+//    while('\0'!=pattern[m]){
+//        cout<<pattern[m];
+//        m++;
+//    }
+//    cout<<"length_pattern is "<<length_pattern<<endl;
+    ///////////////////////////////
+    int length_longest_prefix = 0;
+    //prefix数组下标从0开始，因为已经匹配个字符串没有任何意义
+    prefix[1] = 0;
+    //nocm表示匹配的字符串长度
+    for (int nocm = 2; nocm < length_pattern + 1; nocm++) {
+        while (length_longest_prefix > 0 && (pattern[length_longest_prefix] != pattern[nocm - 1]))
+            length_longest_prefix = prefix[length_longest_prefix];
+        if (pattern[length_longest_prefix] == pattern[nocm - 1])
+            length_longest_prefix++;
+        prefix[nocm] = length_longest_prefix;
+    }
+}
+
