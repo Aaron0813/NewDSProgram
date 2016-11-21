@@ -3,43 +3,117 @@
 //
 
 #include <cstring>
+#include <windows.h>
+#include <stdio.h>
 #include "preDefine.h"
+#include "park.h"
 
-void ShowMenu() {
-    cout << "============================" << endl;
-    cout << "    欢迎使用景区管理系统    " << endl;
-    cout << "       **请选择菜单**       " << endl;
-    cout << "============================" << endl;
-    cout << "1.创建景区景点分布图" << endl;
-    cout << "2.输出景区景点分布图" << endl;
-    cout << "3.输出导游线路图" << endl;
-    cout << "4.输出导游线路图中的回路" << endl;
-    cout << "5.求两个景点间最短路径和最短距离" << endl;
-    cout << "6.输出道路修建规划图" << endl;
-    cout << "7.停车场车辆进出信息" << endl;
-    cout << "8.退出系统" << endl;
+void ShowMenu(Graph &graph) {
+    Graph tour_graph(12);
+    bool flag = true;
+    string choose;
+    while (flag) {
+//        system("cls");
+        fflush(stdin);
+        cout << "============================" << endl;
+        cout << "    欢迎使用景区管理系统    " << endl;
+        cout << "       **请选择菜单**       " << endl;
+        cout << "============================" << endl;
+        cout << "1.创建景区景点分布图" << endl;
+        cout << "2.输出景区景点分布图" << endl;
+        cout << "3.输出导游线路图" << endl;
+        cout << "4.输出导游线路图中的回路" << endl;
+        cout << "5.求两个景点间最短路径和最短距离" << endl;
+        cout << "6.输出道路修建规划图" << endl;
+        cout << "7.景点排序" << endl;
+        cout << "8.景点搜索" << endl;
+        cout << "9.停车场车辆进出信息" << endl;
+        cout << "10.退出系统" << endl;
+        cin >> choose;
+        if ("1" == choose) {
+            LoadGraph(graph);
+        } else if ("2" == choose) {
+            if (graph.is_created == true) {
+                OutputAdjMatrix(graph);
+            } else {
+                cout << "景区信息还没有录入，请录入后再做操作" << endl;
+            }
+
+        } else if ("3" == choose) {
+            if (graph.is_created == true) {
+                CreateTourSortGraph(graph, tour_graph);
+            } else {
+                cout << "景区信息还没有录入，请录入后再做操作" << endl;
+            }
+
+        } else if ("4" == choose) {
+            if (graph.is_created == true) {
+                FindLoop(graph);
+            } else {
+                cout << "景区信息还没有录入，请录入后再做操作" << endl;
+            }
+
+        } else if ("5" == choose) {
+            if (graph.is_created == true) {
+                MiniDistance(graph);
+            } else {
+                cout << "景区信息还没有录入，请录入后再做操作" << endl;
+            }
+
+        } else if ("6" == choose) {
+            if (graph.is_created == true) {
+                MiniSpanTree(graph, "北门");
+            } else {
+                cout << "景区信息还没有录入，请录入后再做操作" << endl;
+            }
+
+        } else if ("7" == choose) {
+            if (graph.is_created == true) {
+                Sort(graph);
+            } else {
+                cout << "景区信息还没有录入，请录入后再做操作" << endl;
+            }
+        } else if ("8" == choose) {
+            if (graph.is_created == true) {
+                Search(graph);
+            } else {
+                cout << "景区信息还没有录入，请录入后再做操作" << endl;
+            }
+        } else if ("9" == choose) {
+            Park();
+        } else if ("10" == choose) {
+            exit(0);
+        } else {
+            cout << "输入错误，请重新输入" << endl;
+//            cout<<"按下任意键继续"<<endl;
+//            cin>>choose;
+        }
+    }
 }
 
-//加载图的相关信息
+/**
+ * 加载图的相关信息
+ * @param graph
+ */
 void LoadGraph(Graph &graph) {
     //存入节点信息
     string filename = "vertexes.txt";
     ifstream inf1(filename.c_str());
-    string name, description;
-    int popular_degree = 0, is_toilet = 0, is_rest = 0;
+//    string name, description;
+//    int popular_degree = 0, is_toilet = 0, is_rest = 0;
     int i = 0, j;
     while (inf1.good()) {
-        //不能够直接通过引用写入数据，待查
-//        inf1>>graph.node_table[i++].name>>graph.node_table[i++].description>>graph.node_table[i++].popular_degree
-//            >>graph.node_table[i++].is_toilet>>graph.node_table[i++].is_rest;
+        ////不能够直接通过引用写入数据，待查---已改正，数组越界
+        inf1 >> graph.node_table[i].name >> graph.node_table[i].description >> graph.node_table[i].popular_degree
+             >> graph.node_table[i].is_toilet >> graph.node_table[i].is_rest;
 
-        inf1 >> name >> description >> popular_degree
-             >> is_toilet >> is_rest;
-        graph.node_table[i].name = name;
-        graph.node_table[i].description = description;
-        graph.node_table[i].popular_degree = popular_degree;
-        graph.node_table[i].is_toilet = is_toilet;
-        graph.node_table[i].is_rest = is_rest;
+//        inf1 >> name >> description >> popular_degree
+//             >> is_toilet >> is_rest;
+//        graph.node_table[i].name = name;
+//        graph.node_table[i].description = description;
+//        graph.node_table[i].popular_degree = popular_degree;
+//        graph.node_table[i].is_toilet = is_toilet;
+//        graph.node_table[i].is_rest = is_rest;
         i++;
     }
     inf1.close();
@@ -93,7 +167,11 @@ void LoadGraph(Graph &graph) {
         cout<<endl;
     }
     cout<<"end"<<endl;
- */
+     */
+    //标记图已经被成功创建
+    graph.is_created = true;
+    cout << "图已经创建成功" << endl;
+
 }
 
 int GetVertexPos(Graph &graph, string &name) {
@@ -104,6 +182,29 @@ int GetVertexPos(Graph &graph, string &name) {
 }
 
 void OutputAdjMatrix(Graph &graph) {
+
+//    cout<<"转换成功"<<endl;
+    ConvertToMatrix(graph);
+    int num_vertices = graph.num_vertices;
+    /**
+     * 测试输出邻接矩阵的信息是否正确*/
+
+    for (int i = 0; i < num_vertices; ++i)//打印第一行
+        cout << "\t" << graph.node_table[i].name;
+    cout << endl;
+
+    for (int i = 0; i < num_vertices; i++) {
+        cout << graph.node_table[i].name << "\t";//打印左侧的表头
+        for (int j = 0; j < num_vertices; j++)
+            cout << graph.adj_matrix[i][j] << "\t";
+        cout << endl;
+    }
+
+
+}
+
+//将邻接链表转换为邻接矩阵
+void ConvertToMatrix(Graph &graph) {
     int i, j, num_vertices = graph.num_vertices;
     //创建一个二维数组用来存储邻接矩阵的信息
     double **a = new double *[num_vertices];
@@ -129,23 +230,6 @@ void OutputAdjMatrix(Graph &graph) {
 //            cout<<i<<endl;
         }
     graph.adj_matrix = a;
-//    cout<<"转换成功"<<endl;
-
-
-    /**
-     * 测试输出邻接矩阵的信息是否正确
-
-    for (int i = 0; i < num_vertices; ++i)//打印第一行
-        cout << "\t" << graph.node_table[i].name;
-    cout << endl;
-
-    for (i = 0; i < num_vertices; i++) {
-        cout << graph.node_table[i].name << "\t";//打印左侧的表头
-        for (j = 0; j < num_vertices; j++)
-            cout << a[i][j] << "\t";
-        cout << endl;
-    }
-     */
     delete[]edge;
 }
 
@@ -163,21 +247,9 @@ void CreateTourSortGraph(Graph &graph, Graph &tour_graph) {
     cout<<"深度优先遍历结束"<<endl;
 */
     string tour_map[2 * graph.num_vertices];
-//    cout<<"size 大小为"<<tour_map->size()<<endl;//size返回的到底是什么
-//    tour_map[0]="1";
-//    tour_map[1]="2";
-//    tour_map[2]="3";
-//    tour_map[3]="4";
-//    tour_map[4]="5";
-//    tour_map[5]="6";
-//    cout<<"size 大小为"<<tour_map->size()<<endl;
-
     int n = 0;
-
     //建立导游路线图
     for (int i = 0; i < graph.num_vertices - 1; i++) {
-//        cout << "IsEdge(graph," << vex[i] << "," << vex[i + 1] << ") " << IsEdge(graph, vex[i], vex[i + 1]) << "  "
-//             << "i=  " << i << endl;
         if (IsEdge(graph, vex[i], vex[i + 1])) {//如果两个顶点之间有边，那么直接将这两个顶点存入路线数组中
             if (i != graph.num_vertices - 2) {
                 tour_map[n++] = vex[i];
@@ -185,8 +257,6 @@ void CreateTourSortGraph(Graph &graph, Graph &tour_graph) {
             } else {
                 tour_map[n++] = vex[i];
                 tour_map[n++] = vex[i + 1];
-//                cout << "vex[i+1]" << vex[i + 1] << endl;
-
             }
         } else {
             int temp_i = i;
@@ -194,22 +264,20 @@ void CreateTourSortGraph(Graph &graph, Graph &tour_graph) {
             tour_map[n++] = vex[i];
             while (!IsEdge(graph, vex[--temp_i], vex[i + 1])) {//只要两个顶点之间没有边
                 tour_map[n++] = vex[temp_i];//将前一个顶点加入到导游了路线图中
-//                cout<<"temp_i  "<<temp_i<<"    "<<vex[temp_i]<<endl;
             }
             tour_map[n++] = vex[temp_i];
-//            cout<<"temp_i->"<<temp_i<<endl;
         }
     }
 
     /**
-     * 测试导游路线图是否正确
+     * 测试导游路线图是否正确*/
 
-    cout << "运行结束,n=" <<n<< endl;
-    cout<<"导游路线图结果"<<endl;
+//    cout << "运行结束,n=" << n << endl;
+    cout << "导游路线图结果" << endl;
     for (int m = 0; m < n; m++) {
-        cout<<tour_map[m]<<"->";
+        cout << tour_map[m] << "->";
     }
-*/
+    cout << "结束" << endl << endl << endl;
     CreateTourGraph(graph, tour_graph, tour_map);
 
 }
@@ -339,17 +407,37 @@ void FindInDegree(Graph graph, int indegree[]) {
 
 //查找一张图中是否有回路
 void FindLoop(Graph &graph) {
-
+    cout << "找出回路成功" << endl;
 }
 
 void MiniDistance(Graph &graph) {
     string start_view, end_view;
     cout << "请输入要查找的两个景点名称" << endl;
-    cin >> start_view >> end_view;
-    int v = GetVertexPos(graph, start_view);
-    int w = GetVertexPos(graph, end_view);
+
+    int v, w;
+    while (true) {
+        cout << "请输入起点名称" << endl;
+        cin >> start_view;
+        v = GetVertexPos(graph, start_view);
+        if (v == -1)
+            cout << "起点不存在，请重新输入" << endl;
+        else
+            break;
+    }
+    while (true) {
+        cout << "请输入终点名称" << endl;
+        cin >> end_view;
+        w = GetVertexPos(graph, end_view);
+        if (w == -1)
+            cout << "终点不存在，请重新输入" << endl;
+        else
+            break;
+    }
     //运用Dijkstra算法计算两点之间的最短路径及其距离花费
-    Dijkstra(graph, v, w);
+    if (v == w) {
+        cout << "起点与终点相同，均为" << start_view << endl;
+    } else
+        Dijkstra(graph, v, w);
 }
 
 void Dijkstra(Graph &graph, int v, int w) {
@@ -362,6 +450,8 @@ void Dijkstra(Graph &graph, int v, int w) {
     //最短路径顶点集---标志已经找到最短路径的顶点集
     int s[num_vertices];
 
+    //更新邻接矩阵信息
+    ConvertToMatrix(graph);
     for (int i = 0; i < num_vertices; i++) {
         dist[i] = (int) graph.adj_matrix[v][i];
         s[i] = 0;
@@ -400,23 +490,13 @@ void Dijkstra(Graph &graph, int v, int w) {
         temp = path[temp];
     }
     temp_stack.push(v);
-//    int m=0;
-//    int tour_path[num_vertices];
-//    while(v!=temp){
-//        temp_stack.push(temp);
-//        temp=path[temp];
-//    }
-//    cout<<path[w]<<" "<<path[path[w]];
-//    for(int i=0;i<num_vertices;i++)
-//        cout<<path[i]<<"->";
-//    cout<<endl;
-//    cout<<
 
     while (!temp_stack.empty()) {
         temp = temp_stack.top();
         cout << graph.node_table[temp].name << "-->";
         temp_stack.pop();
     }
+    cout << "结束" << endl;
     cout << endl << "最短距离为  " << dist[w] << endl;
 
 }
@@ -426,6 +506,8 @@ void MiniSpanTree(Graph &graph, string u) {
     //获取起始点在图中链表的位置
     int v = GetVertexPos(graph, u);
 //    cout<<" 最小生成树的起点"<<v<<endl;
+    //更新邻接矩阵信息---该算法要求邻接矩阵必须先被创建，否则不能执行程序
+    ConvertToMatrix(graph);
     Prim(graph, v);
 
 }
@@ -485,72 +567,73 @@ void Prim(Graph &graph, int v) {
 //    MSTEdgeNode e;
     string start;
     string departure;
+    int total_cost = 0;
     for (int i = 0; i < num_vertices - 1; i++) {
         e = edgeNode[i];
         start = graph.node_table[e.head].name;
         departure = graph.node_table[e.tail].name;
+        total_cost += e.cost;
 //        cout << e.head << "->" << e.tail << "->" << e.cost << endl;
 
 //        start=(graph.node_table[e.head].name);
         cout << "从  " << start << "  修一条到  " << departure << "的道路  " << endl;
     }
+    cout << "修建路程的总代价为   " << total_cost << endl;
 
 }
 
 //排序功能的主函数入口
 void Sort(Graph &graph) {
-    int choose;
-    cout << "1.根据景点欢迎度排序" << endl;
-    cout << "2.根据景点岔路数排序" << endl;
-    cout << "      请选择" << endl;
-    cin >> choose;
-    switch (choose) {
-        case 1:
+    bool flag = true;
+    string choose;
+    while (flag) {
+        cout << "1.根据景点欢迎度排序" << endl;
+        cout << "2.根据景点岔路数排序" << endl;
+        cout << "3.返回主菜单" << endl;
+        cout << "      请选择" << endl;
+        cin >> choose;
+        if ("1" == choose) {
             SortByPopularDegree(graph);
-            break;
-        case 2:
+        } else if ("2" == choose) {
             SortByForks(graph);
-            break;
+        } else if ("3" == choose) {
+            flag = false;
+            ShowMenu(graph);
+        } else {
+            cout << "输入有误，请重新输入" << endl;
+        }
     }
-
 }
 
 //根据欢迎度排序
 void SortByPopularDegree(Graph &graph) {
     //获取图中欢迎度的数据及其下标
-//    int popular_degree[graph.num_vertices][2];
     SortNode sortNodes[graph.num_vertices];
     for (int i = 0; i < graph.num_vertices; i++) {
-//        popular_degree[i][0] = graph.node_table[i].popular_degree;
-//        popular_degree[i][1] = i;
         sortNodes[i].value = graph.node_table[i].popular_degree;
         sortNodes[i].name = graph.node_table[i].name;
     }
 
-    int choose;
+    string choose;
     cout << "1.冒泡排序" << endl;
     cout << "2.快速排序" << endl;
-    cout << "3.归并排序" << endl;
+//    cout << "3.归并排序" << endl;
     cout << "  请选择" << endl;
     cin >> choose;
-    switch (choose) {
-        case 1:
-            BubbleSort(sortNodes, graph.num_vertices);
-            cout << "针对景点受欢迎程度进行冒泡排序的结果为：" << endl;
-            cout << "景点名称\t" << "景点受欢迎度\t" << endl;
-            for (int i = 0; i < graph.num_vertices; i++)
-                cout << sortNodes[i].name << "\t\t" << sortNodes[i].value << endl;
-            break;
-        case 2:
-            QuickSort(sortNodes, 0, 11);
-            cout << "针对景点受欢迎程度进行冒泡排序的结果为：" << endl;
-            cout << "景点名称\t" << "景点受欢迎度\t" << endl;
-            for (int i = 0; i < graph.num_vertices; i++)
-                cout << sortNodes[i].name << "\t\t" << sortNodes[i].value << endl;
-            break;
-        case 3:
-//            MergeSort(popular_degree);
-            break;
+    if ("1" == choose) {
+        BubbleSort(sortNodes, graph.num_vertices);
+        cout << "针对景点受欢迎程度进行冒泡排序的结果为：" << endl;
+        OutputSortResult(graph, sortNodes);
+    } else if ("2" == choose) {
+        QuickSort(sortNodes, 0, 11);
+        cout << "针对景点受欢迎程度进行冒泡排序的结果为：" << endl;
+        OutputSortResult(graph, sortNodes);
+    }
+// else if("3"==choose){
+//        MergeSort(popular_degree);
+//    }
+    else {
+        cout << "输入有误，请重新输入" << endl;
     }
 
 }
@@ -566,31 +649,26 @@ void SortByForks(Graph &graph) {
         sortNodes[i].name = graph.node_table[i].name;
     }
 
-
-    int choose;
+    string choose;
     cout << "1.冒泡排序" << endl;
     cout << "2.快速排序" << endl;
-    cout << "3.归并排序" << endl;
+//    cout << "3.归并排序" << endl;
     cout << "  请选择" << endl;
     cin >> choose;
-    switch (choose) {
-        case 1:
-            BubbleSort(sortNodes, graph.num_vertices);
-            cout << "针对景点岔路数进行快速排序的结果为：" << endl;
-            cout << "景点名称\t" << "景点岔路数\t" << endl;
-            for (int i = 0; i < graph.num_vertices; i++)
-                cout << sortNodes[i].name << "\t\t" << sortNodes[i].value << endl;
-            break;
-        case 2:
-            QuickSort(sortNodes, 0, 11);
-            cout << "针对景点岔路数进行快速排序的结果为：" << endl;
-            cout << "景点名称\t" << "景点岔路数\t" << endl;
-            for (int i = 0; i < graph.num_vertices; i++)
-                cout << sortNodes[i].name << "\t\t" << sortNodes[i].value << endl;
-            break;
-        case 3:
-//            MergeSort(popular_degree);
-            break;
+    if ("1" == choose) {
+        BubbleSort(sortNodes, graph.num_vertices);
+        cout << "针对景点岔路数进行快速排序的结果为：" << endl;
+        OutputSortResult(graph, sortNodes);
+    } else if ("2" == choose) {
+        QuickSort(sortNodes, 0, 11);
+        cout << "针对景点岔路数进行快速排序的结果为：" << endl;
+        OutputSortResult(graph, sortNodes);
+    }
+// else if("3"==choose){
+//        MergeSort(popular_degree);
+//    }
+    else {
+        cout << "输入有误，请重新输入" << endl;
     }
 
 }
@@ -644,6 +722,13 @@ void Swap(SortNode &node1, SortNode &node2) {
 //归并排序
 void MergeSort(int popular_degree[][2], int size) {
 
+}
+
+
+void OutputSortResult(Graph &graph, SortNode sortNodes[]) {
+    cout << "景点名称\t" << "景点岔路数\t" << endl;
+    for (int i = 0; i < graph.num_vertices; i++)
+        cout << sortNodes[i].name << "\t\t" << sortNodes[i].value << endl;
 }
 
 //查找的主函数---输入一个字符串，使用KMP分别遍历景点的名称以及景点的描述
@@ -775,4 +860,5 @@ void CptPfFunc(char pattern[], int prefix[]) {
         prefix[nocm] = length_longest_prefix;
     }
 }
+
 

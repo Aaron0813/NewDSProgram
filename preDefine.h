@@ -51,6 +51,7 @@ struct Vertex {
 };
 
 struct Graph {
+    bool is_created;
     //节点的数量
     int num_vertices;
     //边的数量
@@ -65,12 +66,14 @@ struct Graph {
             num_vertices = sz;
             num_edges = 0;
             node_table = new Vertex[num_vertices];
+            is_created = false;
         } else
             cout << "初始化错误，节点数过大" << endl;
 //        cout << "Initial Ok" << node_table[0].name << endl;
     }
 //    ~Graph();
 };
+
 
 //最小生成树边结点的结构体定义
 struct MSTEdgeNode {
@@ -85,7 +88,7 @@ struct SortNode {
 };
 
 //展示菜单目录
-void ShowMenu();
+void ShowMenu(Graph &graph);
 
 //加载图的信息
 void LoadGraph(Graph &graph);
@@ -95,6 +98,9 @@ int GetVertexPos(Graph &graph, string &name);
 
 //输出一个邻接矩阵
 void OutputAdjMatrix(Graph &graph);
+
+//将邻接链表转换为邻接矩阵
+void ConvertToMatrix(Graph &graph);
 
 //输出导游路线图
 void CreateTourSortGraph(Graph &graph, Graph &tour_graph);
@@ -153,6 +159,9 @@ void QuickSort(SortNode sortNode[], int left, int right);
 //快速排序的辅助函数
 int Partition(SortNode sortNode[], int left, int right);
 
+//输出排序结果的函数
+void OutputSortResult(Graph &graph, SortNode sortNodes[]);
+
 //交换两个二维数组
 //void Swap(int a[1][2], int b[1][2]);
 void Swap(SortNode &a, SortNode &b);
@@ -167,17 +176,6 @@ int KMPSearch(char target[], char pattern[]);
 
 //计算模式串前缀的函数
 void CptPfFunc(char pattern[], int prefix[]);
-
-
-
-
-////判断图是否为空
-//int GraphEmpty(Graph & graph)const {return graph.num_vertices==0;}
-////判断图的节点数是否已经达到最大上限
-//int GraphFull(Graph & graph)const { return graph.num_vertices==MAX_VERTEX_NUM;}
-////返回指定节点的名称
-//string GetNodeName(Graph & graph,int i)
-//{return i>=0&&i<graph.num_vertices?graph.node_table[i].name:NULL;}
 
 
 
