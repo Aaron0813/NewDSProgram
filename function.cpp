@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "preDefine.h"
 #include "park.h"
+#include "graph.h"
 
 void ShowMenu(Graph &graph) {
     Graph tour_graph(12);
@@ -27,7 +28,7 @@ void ShowMenu(Graph &graph) {
         cout << "6.输出道路修建规划图" << endl;
         cout << "7.景点排序" << endl;
         cout << "8.景点搜索" << endl;
-        cout << "9.停车场车辆进出信息" << endl;
+        cout << "9.停车场管理" << endl;
         cout << "10.退出系统" << endl;
         cin >> choose;
         if ("1" == choose) {
@@ -99,35 +100,23 @@ void LoadGraph(Graph &graph) {
     //存入节点信息
     string filename = "vertexes.txt";
     ifstream inf1(filename.c_str());
-//    string name, description;
-//    int popular_degree = 0, is_toilet = 0, is_rest = 0;
     int i = 0, j;
     while (inf1.good()) {
         ////不能够直接通过引用写入数据，待查---已改正，数组越界
         inf1 >> graph.node_table[i].name >> graph.node_table[i].description >> graph.node_table[i].popular_degree
              >> graph.node_table[i].is_toilet >> graph.node_table[i].is_rest;
 
-//        inf1 >> name >> description >> popular_degree
-//             >> is_toilet >> is_rest;
-//        graph.node_table[i].name = name;
-//        graph.node_table[i].description = description;
-//        graph.node_table[i].popular_degree = popular_degree;
-//        graph.node_table[i].is_toilet = is_toilet;
-//        graph.node_table[i].is_rest = is_rest;
         i++;
     }
     inf1.close();
 
     /**
-     * 测试节点信息是否存入正确
+     * 测试节点信息是否存入正确*/
 
     for (int m = 0; m < i; m++) {
         cout << m << "  " << (graph.node_table[m].name) << " " << (graph.node_table[m].description) << endl;
     }
-*/
-//        cout<<j<<"  "<<(graph.node_table[j].name)<<" "<<(graph.node_table[j].description)<<endl;
-
-
+    cout << "i= " << i << endl;
 
     //存入路径信息
     filename = "routes.txt";
@@ -136,54 +125,58 @@ void LoadGraph(Graph &graph) {
     int timeFee = 0, distance = 0;
     while (inf2.good()) {
         inf2 >> from >> to >> distance >> timeFee;
-//        cout<<from<<"  "<<to<<"  "<<distance<<"  "<<timeFee<<endl;
+
         //查找顶点所在数组中的位置
         i = GetVertexPos(graph, from);
         j = GetVertexPos(graph, to);
         //创建边信息并赋值
         Edge *P = new Edge(j, distance, timeFee);
         Edge *Q = new Edge(i, distance, timeFee);
-        P->link = graph.node_table[i].adj;//第一次P被复制为NULL，但后面几次就会不断的加到纠结点的前面
+        P->link = graph.node_table[i].adj;//第一次P被复制为NULL，但后面几次就会不断的加到结点的前面
         graph.node_table[i].adj = P;
 
         Q->link = graph.node_table[j].adj;
         graph.node_table[j].adj = Q;
         graph.num_edges++;
     }
-//    cout<<"边数为  "<<graph.num_edges<<endl;
-    inf2.close();
-    /**
-      * 测试路径信息是否存入正确--应该是正确的-----一定要注意相关的编码要统一啊
-        for(int m=0;m<graph.num_vertices;m++)
-        cout<<(graph.node_table[m].adj->dest)<<" "<<(graph.node_table[m].adj->distance)<<endl;
 
-    int num_vertices=graph.num_vertices;
+    inf2.close();
+
+    cout << "Lujing wenjian yiguanbi " << endl;
+    /**
+      * 测试路径信息是否存入正确--应该是正确的-----一定要注意相关的编码要统一啊*/
+    for (int m = 0; m < graph.num_vertices; m++) {
+        cout << (graph.node_table[m].adj->dest) << " " << (graph.node_table[m].adj->distance) << endl;
+        }
+
+    cout << "111  num vertexes   " << graph.num_vertices << endl;
+    int num_vertices = graph.num_vertices;
     Edge *edge;
-    for(i=0;i<num_vertices;i++){
-        cout<<graph.node_table[i].name<<"  ";
-        for(edge=graph.node_table[i].adj;edge;edge=edge->link){//遍历某一个节点的所有邻接节点信息
-            cout<<graph.node_table[edge->dest].name<<"  ";
+    for (i = 0; i < num_vertices; i++) {
+        cout << graph.node_table[i].name << "  ";
+        for (edge = graph.node_table[i].adj; edge; edge = edge->link) {//遍历某一个节点的所有邻接节点信息
+            cout << graph.node_table[edge->dest].name << "  ";
         }
         cout<<endl;
     }
-    cout<<"end"<<endl;
-     */
+    ///////////////////////////////////////////////
+//    cout<<graph.node_table[5].name<<endl;
+//    Edge *edge;
+//    for(edge=graph.node_table[5].adj;edge;edge=edge->link){//遍历某一个节点的所有邻接节点信息
+//            cout<<graph.node_table[edge->dest].name<<"  ";
+//        }
+//    cout<<"end"<<endl;
+
     //标记图已经被成功创建
     graph.is_created = true;
     cout << "图已经创建成功" << endl;
 
 }
 
-int GetVertexPos(Graph &graph, string &name) {
-    for (int i = 0; i < graph.num_vertices; i++)
-        if (name == graph.node_table[i].name)//找到了要查找的顶点
-            return i;
-    return -1;//没找到，返回-1
-}
 
+//输出邻接矩阵的信息
 void OutputAdjMatrix(Graph &graph) {
 
-//    cout<<"转换成功"<<endl;
     ConvertToMatrix(graph);
     int num_vertices = graph.num_vertices;
     /**
@@ -199,39 +192,9 @@ void OutputAdjMatrix(Graph &graph) {
             cout << graph.adj_matrix[i][j] << "\t";
         cout << endl;
     }
-
-
 }
 
-//将邻接链表转换为邻接矩阵
-void ConvertToMatrix(Graph &graph) {
-    int i, j, num_vertices = graph.num_vertices;
-    //创建一个二维数组用来存储邻接矩阵的信息
-    double **a = new double *[num_vertices];
-    for (i = 0; i < num_vertices; i++)
-        a[i] = new double[num_vertices];
 
-
-    //初始化矩阵信息
-    for (i = 0; i < num_vertices; i++)
-        for (j = 0; j < num_vertices; j++)
-            if (i != j)
-                a[i][j] = INFINITY;
-            else
-                a[i][j] = 0;
-//    cout<<"矩阵初始化成功"<<endl;
-
-    //将邻接链表转存为邻接矩阵
-    Edge *edge = new Edge;
-    for (i = 0; i < num_vertices; i++)
-        for (edge = graph.node_table[i].adj; edge; edge = edge->link) {//遍历某一个节点的所有邻接节点信息
-            j = edge->dest;
-            a[i][j] = edge->distance;
-//            cout<<i<<endl;
-        }
-    graph.adj_matrix = a;
-    delete[]edge;
-}
 
 //输出导游路线图
 void CreateTourSortGraph(Graph &graph, Graph &tour_graph) {

@@ -4,6 +4,7 @@
 int main() {
 //    Graph graph(12), ;
     Graph graph(12);
+    Graph new_graph(8);
 
     ShowMenu(graph);
 //    LoadGraph(graph);

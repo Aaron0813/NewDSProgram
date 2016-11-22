@@ -3,6 +3,8 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/function.cpp" charset="GBK" />
     <file url="file://$PROJECT_DIR$/main.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/new_routes.txt" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/new_vertexes.txt" charset="GBK" />
     <file url="file://$PROJECT_DIR$/park.cpp" charset="GBK" />
     <file url="file://$PROJECT_DIR$/park.h" charset="GBK" />
     <file url="file://$PROJECT_DIR$/preDefine.h" charset="UTF-8" />
