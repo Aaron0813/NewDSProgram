@@ -701,46 +701,26 @@ void Search(Graph &graph) {
     memset(target, 0, 2048);
     char pattern[2048];
     memset(pattern, 0, 2048);
-//    char pattern2[2014];
     cout << "请输入要查找的关键字" << endl;
     cin >> key_word;
 
-//    key_word.
+//    if(graph.node_table[5].description.c)
+
     strcpy(target, key_word.c_str());
-    /////////////////////////////////////////
-//    int m=0;
-//    while('\0'!=target[m]){
-//        cout<<target[m];
-//        m++;
-//    }
-    /////////////////////////////////////
+
     //遍历所有景点的名称以及其简介
     int i = 0;
     for (; i < graph.num_vertices; i++) {
 
         strcpy(pattern, graph.node_table[i].name.c_str());
-//        //////////////////////////////////////////
-//        int m=0;cout<<"景点名称为 is";
-//        while('\0'!=pattern[m]){
-//            cout<<pattern[m];
-//            m++;
-//        }
-//
 
-        ////////////////////////////////////////////
         if (KMPSearch(target, pattern) == 1) {
             cout << graph.node_table[i].description << endl;
             break;
         }
         memset(pattern, 0, 2048);
         strcpy(pattern, graph.node_table[i].description.c_str());
-        ///////////////////////////////////////
-//        m=0;cout<<"景点简介为 is";
-//        while('\0'!=pattern[m]){
-//            cout<<pattern[m];
-//            m++;
-//        }
-        //////////////////////////////////////
+
         if (KMPSearch(target, pattern) == 1) {
             cout << graph.node_table[i].description << endl;
             break;
@@ -764,25 +744,9 @@ int KMPSearch(char target[], char pattern[]) {
     while ('\0' != pattern[pattern_length])
         pattern_length++;
 
-//    cout<<"target_length  "<<target_length<<"   pattern_length  "<<pattern_length<<endl;
-//    //////////////////////////////
-//    int m=0;cout<<"pattern 的内容 is  ";
-//    while('\0'!=pattern[m]){
-//        cout<<pattern[m];
-//        m++;
-//    }
-
-
-    /////////////////////////////
     //计算关键字的前缀数组
     CptPfFunc(pattern, prefix);
-    /////////////////////////////
-//     m=1;cout<<"前缀函数 is  ";
-//    while('\0'!=prefix[m]){
-//        cout<<prefix[m];
-//        m++;
-//    }
-    ////////////////////////
+
     //已经匹配的字符个数
     int nocm = 0;
     for (int i = 0; i < target_length; i++) {
@@ -803,14 +767,7 @@ void CptPfFunc(char pattern[], int prefix[]) {
     //计算模式串的长度
     while ('\0' != pattern[length_pattern])
         length_pattern++;
-//    ///////////////////////////
-//    int m=0;cout<<"CptPfFunc   pattern 的内容 is  ";
-//    while('\0'!=pattern[m]){
-//        cout<<pattern[m];
-//        m++;
-//    }
-//    cout<<"length_pattern is "<<length_pattern<<endl;
-    ///////////////////////////////
+
     int length_longest_prefix = 0;
     //prefix数组下标从0开始，因为已经匹配个字符串没有任何意义
     prefix[1] = 0;
