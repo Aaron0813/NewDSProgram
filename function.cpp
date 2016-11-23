@@ -11,6 +11,7 @@
 
 void ShowMenu(Graph &graph) {
     Graph tour_graph(12);
+    Graph new_tour_graph(8);
     bool flag = true;
     string choose;
     while (flag) {
@@ -42,14 +43,14 @@ void ShowMenu(Graph &graph) {
 
         } else if ("3" == choose) {
             if (graph.is_created == true) {
-                CreateTourSortGraph(graph, tour_graph);
+                CreateTourSortGraph(graph);
             } else {
                 cout << "景区信息还没有录入，请录入后再做操作" << endl;
             }
 
         } else if ("4" == choose) {
             if (graph.is_created == true) {
-                FindLoop(graph);
+                FindLoop(new_tour_graph);
             } else {
                 cout << "景区信息还没有录入，请录入后再做操作" << endl;
             }
@@ -83,6 +84,7 @@ void ShowMenu(Graph &graph) {
         } else if ("9" == choose) {
             Park();
         } else if ("10" == choose) {
+            cout << "成功退出程序" << endl;
             exit(0);
         } else {
             cout << "输入错误，请重新输入" << endl;
@@ -99,27 +101,28 @@ void ShowMenu(Graph &graph) {
 void LoadGraph(Graph &graph) {
     //存入节点信息
     string filename = "vertexes.txt";
+//    string filename = "new_vertexes.txt";
     ifstream inf1(filename.c_str());
     int i = 0, j;
     while (inf1.good()) {
         ////不能够直接通过引用写入数据，待查---已改正，数组越界
         inf1 >> graph.node_table[i].name >> graph.node_table[i].description >> graph.node_table[i].popular_degree
              >> graph.node_table[i].is_toilet >> graph.node_table[i].is_rest;
-
         i++;
     }
+//    graph.num_vertices=i+1;
     inf1.close();
 
     /**
      * 测试节点信息是否存入正确*/
-
+    cout << "景点信息录入成功:" << endl;
     for (int m = 0; m < i; m++) {
-        cout << m << "  " << (graph.node_table[m].name) << " " << (graph.node_table[m].description) << endl;
+        cout << m << "\t" << (graph.node_table[m].name) << "\t" << (graph.node_table[m].description) << "\t" << endl;
     }
-    cout << "i= " << i << endl;
 
     //存入路径信息
     filename = "routes.txt";
+//    filename = "new_routes.txt";
     ifstream inf2(filename.c_str());
     string from, to;
     int timeFee = 0, distance = 0;
@@ -142,20 +145,21 @@ void LoadGraph(Graph &graph) {
 
     inf2.close();
 
-    cout << "Lujing wenjian yiguanbi " << endl;
+
     /**
       * 测试路径信息是否存入正确--应该是正确的-----一定要注意相关的编码要统一啊*/
-    for (int m = 0; m < graph.num_vertices; m++) {
-        cout << (graph.node_table[m].adj->dest) << " " << (graph.node_table[m].adj->distance) << endl;
-        }
+    cout << endl << endl << "路径信息录入成功,以下为相邻景点的信息:" << endl;
+//    for (int m = 0; m < graph.num_vertices; m++) {
+//        cout << (graph.node_table[m].adj->dest) << " " << (graph.node_table[m].adj->distance) << endl;
+//        }
 
-    cout << "111  num vertexes   " << graph.num_vertices << endl;
+//    cout << "111  num vertexes   " << graph.num_vertices << endl;
     int num_vertices = graph.num_vertices;
     Edge *edge;
     for (i = 0; i < num_vertices; i++) {
-        cout << graph.node_table[i].name << "  ";
+        cout << graph.node_table[i].name << "\t";
         for (edge = graph.node_table[i].adj; edge; edge = edge->link) {//遍历某一个节点的所有邻接节点信息
-            cout << graph.node_table[edge->dest].name << "  ";
+            cout << graph.node_table[edge->dest].name << "\t";
         }
         cout<<endl;
     }
@@ -169,7 +173,7 @@ void LoadGraph(Graph &graph) {
 
     //标记图已经被成功创建
     graph.is_created = true;
-    cout << "图已经创建成功" << endl;
+    cout << endl << endl << "图已经创建成功" << endl;
 
 }
 
@@ -197,7 +201,7 @@ void OutputAdjMatrix(Graph &graph) {
 
 
 //输出导游路线图
-void CreateTourSortGraph(Graph &graph, Graph &tour_graph) {
+void CreateTourSortGraph(Graph &graph) {
     string *vex = DFSTraverse(graph);
 
     /**
@@ -241,7 +245,7 @@ void CreateTourSortGraph(Graph &graph, Graph &tour_graph) {
         cout << tour_map[m] << "->";
     }
     cout << "结束" << endl << endl << endl;
-    CreateTourGraph(graph, tour_graph, tour_map);
+//    CreateTourGraph(graph, tour_graph, tour_map);
 
 }
 
@@ -370,6 +374,8 @@ void FindInDegree(Graph graph, int indegree[]) {
 
 //查找一张图中是否有回路
 void FindLoop(Graph &graph) {
+
+
     cout << "找出回路成功" << endl;
 }
 
@@ -539,7 +545,7 @@ void Prim(Graph &graph, int v) {
 //        cout << e.head << "->" << e.tail << "->" << e.cost << endl;
 
 //        start=(graph.node_table[e.head].name);
-        cout << "从  " << start << "  修一条到  " << departure << "的道路  " << endl;
+        cout << "从   " << start << "\t" << "修一条到    " << departure << "\t" << "的道路 " << endl;
     }
     cout << "修建路程的总代价为   " << total_cost << endl;
 
@@ -703,31 +709,58 @@ void Search(Graph &graph) {
     memset(pattern, 0, 2048);
     cout << "请输入要查找的关键字" << endl;
     cin >> key_word;
+    /**
+     * 原来的程序*/
 
-//    if(graph.node_table[5].description.c)
-
-    strcpy(target, key_word.c_str());
+    strcpy(pattern, key_word.c_str());
 
     //遍历所有景点的名称以及其简介
     int i = 0;
     for (; i < graph.num_vertices; i++) {
-
-        strcpy(pattern, graph.node_table[i].name.c_str());
-
-        if (KMPSearch(target, pattern) == 1) {
+        memset(target, 0, 2048);
+        strcpy(target, graph.node_table[i].name.c_str());
+//        cout<<"i= "<<i<<target<<endl;
+        if (KMP(target, pattern) == 0) {
             cout << graph.node_table[i].description << endl;
             break;
         }
-        memset(pattern, 0, 2048);
-        strcpy(pattern, graph.node_table[i].description.c_str());
+        memset(target, 0, 2048);
+        strcpy(target, graph.node_table[i].description.c_str());
 
-        if (KMPSearch(target, pattern) == 1) {
+        if (KMP(target, pattern) == 0) {
             cout << graph.node_table[i].description << endl;
             break;
         }
     }
     if (i == graph.num_vertices)
         cout << "未查找到所要信息，请重新输入" << endl;
+
+
+
+    /**
+     * 新的代码
+     */
+//    cout<<"pattern 为"<<pattern<<endl;
+//    int i = 0;
+//    for (; i < graph.num_vertices; i++) {
+//
+////        strcpy(pattern, graph.node_table[i].name.c_str());
+//        strcpy(target,graph.node_table[i].name.c_str());
+//
+//        if (KMP(target, pattern) !=- 1) {
+//            cout << graph.node_table[i].description << endl;
+//            break;
+//        }
+//        memset(pattern, 0, 2048);
+//        strcpy(pattern, graph.node_table[i].description.c_str());
+//
+//        if (KMP(target, pattern) != 1) {
+//            cout << graph.node_table[i].description << endl;
+//            break;
+//        }
+//    }
+//    if (i == graph.num_vertices)
+//        cout << "未查找到所要信息，请重新输入" << endl;
 
 }
 
@@ -779,6 +812,55 @@ void CptPfFunc(char pattern[], int prefix[]) {
             length_longest_prefix++;
         prefix[nocm] = length_longest_prefix;
     }
+}
+
+
+//新的KMP前缀创建
+void get_next(char *t, int next[]) {
+    int t_len = strlen(t);
+    int i = 0;         //求解每个next[i]
+    next[0] = -1; //递推基本条件,然后求解next[i+1]
+    int j = -1;     //向后递推位置下标
+    /*
+    next[i]=k =>T0...Tk-1=Ti-k...Ti-1
+       求解next[i+1]
+    1> 如果T0..Tk-1Tk=Ti-k...Ti-1Ti=>next[i+1]=k+1=next[i]+1;
+    2>Tk<>Ti,next[k]=k', 如果Ti=Tk'=>next[i+1]=k'+1=next[k]+1=next[next[i]]+1;
+    3>依次递推 最后情况next[i+1]=next[0]+1=0,即
+    */
+    while (i < t_len) {
+        if (j == -1 || t[i] == t[j])  //j==-1证明已经与t[0]不匹配了，此时next[i+1]=0
+        {
+            i++;
+            j++;
+            next[i] = j;
+        } else {
+            j = next[j];
+        }
+    }
+}
+
+//KMP主算法
+int KMP(char *s, char *t) {
+    int s_len = strlen(s);
+    int t_len = strlen(t);
+    int i = 0;
+    int j = 0;
+    int *next = new int[t_len];
+    get_next(t, next);
+    if (t_len > s_len) return -1;
+    while (i < s_len && j < t_len) {
+        if (j == -1 || s[i] == t[j]) {
+            i++;
+            j++;
+        } else {
+            j = next[j];
+        }
+    }//end while
+    if (j >= t_len)
+        return 0;
+    else
+        return -1;
 }
 
 

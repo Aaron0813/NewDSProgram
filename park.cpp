@@ -151,7 +151,7 @@ void DepartParking(CarStack &parking_stack, CarStack &temp_parking_stack, CarQue
         cout << "=================================收据=====================================" << endl;
         cout << "车牌号\t" << "进入停车场时间\t" << "离开停车场时间\t" << "停留时间\t" << "缴费金额" << endl;
         cout << "--------------------------------------------------------------------------" << endl;
-        cout << car_number << "\t" << temp.time << "\t" << depart_time << "\t" << depart_time - depart_car.time
+        cout << car_number << "\t" << temp.time << "\t" << depart_time << "\t" << depart_time - temp.time
              << "\t" << money << endl;
         while (temp_parking_stack.top != -1) {//把临时停车场的车全部倒回去---简直跟傻逼一样这个停车场设计
             StackPop(temp_parking_stack, temp);

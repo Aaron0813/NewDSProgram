@@ -34,7 +34,7 @@ void OutputAdjMatrix(Graph &graph);
 
 
 //输出导游路线图
-void CreateTourSortGraph(Graph &graph, Graph &tour_graph);
+void CreateTourSortGraph(Graph &graph);
 
 
 
@@ -93,6 +93,12 @@ int KMPSearch(char target[], char pattern[]);
 
 //计算模式串前缀的函数
 void CptPfFunc(char pattern[], int prefix[]);
+
+//新的KMP前缀创建
+void get_next(char *t, int next[]);
+
+//KMP主算法
+int KMP(char *s, char *t);
 
 
 
