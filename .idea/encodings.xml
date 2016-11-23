@@ -2,12 +2,15 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/function.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/graph.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/graph.h" charset="GBK" />
     <file url="file://$PROJECT_DIR$/main.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/myAlgorithm.cpp" charset="GBK" />
     <file url="file://$PROJECT_DIR$/new_routes.txt" charset="GBK" />
     <file url="file://$PROJECT_DIR$/new_vertexes.txt" charset="GBK" />
     <file url="file://$PROJECT_DIR$/park.cpp" charset="GBK" />
     <file url="file://$PROJECT_DIR$/park.h" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/preDefine.h" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/preDefine.h" charset="GBK" />
     <file url="file://$PROJECT_DIR$/routes.txt" charset="GBK" />
     <file url="file://$PROJECT_DIR$/vertexes.txt" charset="GBK" />
   </component>

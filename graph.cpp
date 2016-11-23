@@ -3,39 +3,100 @@
 //
 #include "graph.h"
 
-//æ ¹æ®é¡¶ç‚¹çš„å€¼æ‰¾åˆ°å…¶ä½ç½®
+//¸ù¾İ¶¥µãµÄÖµÕÒµ½ÆäÎ»ÖÃ
 int GetVertexPos(Graph &graph, string &name) {
     for (int i = 0; i < graph.num_vertices; i++)
-        if (name == graph.node_table[i].name)//æ‰¾åˆ°äº†è¦æŸ¥æ‰¾çš„é¡¶ç‚¹
+        if (name == graph.node_table[i].name)//ÕÒµ½ÁËÒª²éÕÒµÄ¶¥µã
             return i;
-    return -1;//æ²¡æ‰¾åˆ°ï¼Œè¿”å›-1
+    return -1;//Ã»ÕÒµ½£¬·µ»Ø-1
 }
 
-//å°†é‚»æ¥é“¾è¡¨è½¬æ¢ä¸ºé‚»æ¥çŸ©é˜µ
+//½«ÁÚ½ÓÁ´±í×ª»»ÎªÁÚ½Ó¾ØÕó
 void ConvertToMatrix(Graph &graph) {
     int i, j, num_vertices = graph.num_vertices;
-    //åˆ›å»ºä¸€ä¸ªäºŒç»´æ•°ç»„ç”¨æ¥å­˜å‚¨é‚»æ¥çŸ©é˜µçš„ä¿¡æ¯
+    //´´½¨Ò»¸ö¶şÎ¬Êı×éÓÃÀ´´æ´¢ÁÚ½Ó¾ØÕóµÄĞÅÏ¢
     double **a = new double *[num_vertices];
     for (i = 0; i < num_vertices; i++)
         a[i] = new double[num_vertices];
 
-    //åˆå§‹åŒ–çŸ©é˜µä¿¡æ¯
+    //³õÊ¼»¯¾ØÕóĞÅÏ¢
     for (i = 0; i < num_vertices; i++)
         for (j = 0; j < num_vertices; j++)
             if (i != j)
                 a[i][j] = INFINITY;
             else
                 a[i][j] = 0;
-//    cout<<"çŸ©é˜µåˆå§‹åŒ–æˆåŠŸ"<<endl;
+//    cout<<"¾ØÕó³õÊ¼»¯³É¹¦"<<endl;
 
-    //å°†é‚»æ¥é“¾è¡¨è½¬å­˜ä¸ºé‚»æ¥çŸ©é˜µ
+    //½«ÁÚ½ÓÁ´±í×ª´æÎªÁÚ½Ó¾ØÕó
     Edge *edge = new Edge;
     for (i = 0; i < num_vertices; i++)
-        for (edge = graph.node_table[i].adj; edge; edge = edge->link) {//éå†æŸä¸€ä¸ªèŠ‚ç‚¹çš„æ‰€æœ‰é‚»æ¥èŠ‚ç‚¹ä¿¡æ¯
+        for (edge = graph.node_table[i].adj; edge; edge = edge->link) {//±éÀúÄ³Ò»¸ö½ÚµãµÄËùÓĞÁÚ½Ó½ÚµãĞÅÏ¢
             j = edge->dest;
             a[i][j] = edge->distance;
 //            cout<<i<<endl;
         }
     graph.adj_matrix = a;
     delete[]edge;
+}
+
+/**
+ * »ñÈ¡½ÚµãvµÄµÚÒ»¸öÁÚ½Ó¶¥µã
+ * @param graph
+ * @param v
+ * @return ´æÔÚ·µ»ØÎ»ÖÃ£¬·ñÔò·µ»Ø-1
+ */
+int GetFirstNeighbor(Graph &graph, int v) {
+    if (v != -1) {
+        Edge *p = graph.node_table[v].adj;
+        //Ö»Òª½Úµã´æÔÚ¾Í·µ»ØÆäÄ¿µÄµØ
+        if (p != NULL)
+            return p->dest;
+    }
+    return -1;//½Úµã²»´æÔÚÔò·µ»Ø-1
+}
+
+/**
+ * »ñÈ¡graphÖĞ½ÚµãvÅÅÔÚwºóÃæµÄÏÂÒ»¸öÁÚ½Ó¶¥µã
+ * @param graph
+ * @param v
+ * @param w
+ * @return ´æÔÚ·µ»ØÎ»ÖÃ£¬·ñÔò·µ»Ø-1
+ */
+int GetNextNeighbor(Graph &graph, int v, int w) {
+    if (v != -1) {
+        Edge *p = graph.node_table[v].adj;
+        while (p != NULL) {
+            //Èç¹ûµ±Ç°½ÚµãÊÇw²¢ÇÒÏÂÒ»¸ö½Úµã²»Îª¿Õ
+            if (p->dest == w && p->link != NULL)
+                //·µ»ØÏÂÒ»¸öÁÚ½Ó½ÚµãÔÚÁÚ½Ó±íÖĞµÄÎ»ÖÃ
+                return p->link->dest;
+            else
+                //¼ÌĞøÑ°ÕÒ½Úµãw
+                p = p->link;
+        }
+    }
+    return -1;//Ã»ÓĞÕÒµ½ÏÂÒ»¸öÁÚ½Ó¶¥µã---·µ»Ø-1
+}
+
+/**
+ * ÅĞ¶ÏgraphÖĞµÄv1,v2Á½¸ö¶¥µãÖ®¼äÊÇ·ñÓĞÖ±½ÓÏàÁÚµÄ±ß
+ * @param graph
+ * @param v1
+ * @param v2
+ * @return
+ */
+bool IsEdge(Graph graph, string v1, string v2) {
+    //»ñÈ¡¶¥µãv1ÔÚÁÚ½Ó±íÖĞµÄ×ø±êÎ»ÖÃ
+    int i = GetVertexPos(graph, v1);
+    //»ñÈ¡¶¥µãv2ÔÚÁÚ½Ó±íÖĞµÄ×ø±êÎ»ÖÃ
+    int j = GetVertexPos(graph, v2);
+    for (Edge *edge = graph.node_table[i].adj; edge; edge = edge->link) {
+        if (j == edge->dest)
+            return true;
+//        else{
+//            edge = edge->link;
+//        }
+    }
+    return false;
 }

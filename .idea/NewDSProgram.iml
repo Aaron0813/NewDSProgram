@@ -6,7 +6,9 @@
       <sourceFolder url="file://$MODULE_DIR$/preDefine.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/graph.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/myAlgorithm.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/park.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/myAlgorithm.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/function.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/park.cpp" isTestSource="false" />

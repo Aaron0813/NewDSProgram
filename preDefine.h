@@ -9,97 +9,53 @@
 #include <iostream>
 #include <fstream>
 #include <stack>
+#include "myAlgorithm.h"
 #include "graph.h"
+#include "park.h"
+
 using namespace std;
 
 #define INFINITY 32767
 #define MAX_VERTEX_NUM 30
 
 
-//è¾…åŠ©æ’åºç®—æ³•çš„ç»“æ„ä½“
-struct SortNode {
-    int value;
-    string name;
-};
-
-//å±•ç¤ºèœå•ç›®å½•
+//Õ¹Ê¾²Ëµ¥Ä¿Â¼
 void ShowMenu(Graph &graph);
 
-//åŠ è½½å›¾çš„ä¿¡æ¯
+//¼ÓÔØÍ¼µÄĞÅÏ¢
 void LoadGraph(Graph &graph);
 
+//ÇóÁ½¸ö¾°µãÖ®¼äµÄ×î¶ÌÂ·¾¶¼°Æä¾àÀë
+void MiniDistance(Graph &graph);
 
-//è¾“å‡ºä¸€ä¸ªé‚»æ¥çŸ©é˜µ
+//Êä³öÒ»¸öÁÚ½Ó¾ØÕó
 void OutputAdjMatrix(Graph &graph);
 
+//Êä³öÅÅĞò½á¹ûµÄº¯Êı
+void OutputSortResult(Graph &graph, SortNode sortNodes[]);
 
-//è¾“å‡ºå¯¼æ¸¸è·¯çº¿å›¾
+//Êä³öµ¼ÓÎÂ·ÏßÍ¼
 void CreateTourSortGraph(Graph &graph);
 
 
-
-
-//æŸ¥æ‰¾ä¸€ä¸ªå›¾ä¸­çš„æ‰€æœ‰èŠ‚ç‚¹çš„å…¥åº¦æ•°
-void FindInDegree(Graph graph, int indegree[]);
-
-//æ ¹æ®æ·±åº¦ä¼˜å…ˆéå†çš„ç»“æœåˆ›å»ºä¸€ä¸ªå›¾--æš‚æ—¶ä¸å†™
+//¸ù¾İÉî¶ÈÓÅÏÈ±éÀúµÄ½á¹û´´½¨Ò»¸öÍ¼--ÔİÊ±²»Ğ´
 void CreateTourGraph(Graph &graph, Graph &tour_graph, string tour_map[]);
 
-//æŸ¥æ‰¾ä¸€å¼ å›¾ä¸­æ˜¯å¦æœ‰å›è·¯
-void FindLoop(Graph &graph);
 
-//æ±‚ä¸¤ä¸ªæ™¯ç‚¹ä¹‹é—´çš„æœ€çŸ­è·¯å¾„åŠå…¶è·ç¦»
-void MiniDistance(Graph &graph);
-
-
-//ç”Ÿæˆæœ€å°ç”Ÿæˆæ ‘çš„ç®—æ³•
-void MiniSpanTree(Graph &graph, string u);
-
-//ä½¿ç”¨Primç”Ÿæˆæœ€å°ç”Ÿæˆæ ‘
-void Prim(Graph &graph, int v);
-
-//æ’åºåŠŸèƒ½çš„ä¸»å‡½æ•°å…¥å£
+//ÅÅĞò¹¦ÄÜµÄÖ÷º¯ÊıÈë¿Ú
 void Sort(Graph &graph);
 
-//æ ¹æ®æ¬¢è¿åº¦æ’åº
+//¸ù¾İ»¶Ó­¶ÈÅÅĞò
 void SortByPopularDegree(Graph &graph);
 
-//æ ¹æ®å²”è·¯æ•°æ’åº
+//¸ù¾İ²íÂ·ÊıÅÅĞò
 void SortByForks(Graph &graph);
 
-//å†’æ³¡æ’åº
-void BubbleSort(SortNode sortNode[], int size);
-
-//å¿«é€Ÿæ’åº
-void QuickSort(SortNode sortNode[], int left, int right);
-
-//å¿«é€Ÿæ’åºçš„è¾…åŠ©å‡½æ•°
-int Partition(SortNode sortNode[], int left, int right);
-
-//è¾“å‡ºæ’åºç»“æœçš„å‡½æ•°
-void OutputSortResult(Graph &graph, SortNode sortNodes[]);
-
-//äº¤æ¢ä¸¤ä¸ªäºŒç»´æ•°ç»„
-//void Swap(int a[1][2], int b[1][2]);
-void Swap(SortNode &a, SortNode &b);
-//å½’å¹¶æ’åº
-void MergeSort(int popular_degree[][2], int size);
-
-//æŸ¥æ‰¾çš„ä¸»å‡½æ•°---è¾“å…¥ä¸€ä¸ªå­—ç¬¦ä¸²ï¼Œä½¿ç”¨KMPåˆ†åˆ«éå†æ™¯ç‚¹çš„åç§°ä»¥åŠæ™¯ç‚¹çš„æè¿°
+//²éÕÒµÄÖ÷º¯Êı---ÊäÈëÒ»¸ö×Ö·û´®£¬Ê¹ÓÃKMP·Ö±ğ±éÀú¾°µãµÄÃû³ÆÒÔ¼°¾°µãµÄÃèÊö
 void Search(Graph &graph);
 
-//ä½¿ç”¨KMPç®—æ³•è¿›è¡ŒæŸ¥æ‰¾å…³é”®å­—çš„æŸ¥æ‰¾
-int KMPSearch(char target[], char pattern[]);
-
-//è®¡ç®—æ¨¡å¼ä¸²å‰ç¼€çš„å‡½æ•°
-void CptPfFunc(char pattern[], int prefix[]);
-
-//æ–°çš„KMPå‰ç¼€åˆ›å»º
-void get_next(char *t, int next[]);
-
-//KMPä¸»ç®—æ³•
-int KMP(char *s, char *t);
-
+//Í£³µ³¡³ÌĞòÈë¿Úº¯Êı
+void Park();
 
 
 #endif //NEWDSPROGRAM_PREDEFINE_H

@@ -5,7 +5,8 @@
 #ifndef NEWDSPROGRAM_PARK_H
 #define NEWDSPROGRAM_PARK_H
 
-#define PARK_MAX_SIZE 1
+#define PARK_MAX_SIZE 3
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -89,9 +90,6 @@ void QueuePush(CarQueue &carQueue, CarInfo carInfo);
 
 //自定义队列的出队操作
 bool QueuePop(CarQueue &carQueue, CarInfo &carInfo);
-
-//停车场程序入口函数
-void Park();
 
 //汽车进入停车场
 void EnterParking(CarStack &parking_stack, CarQueue &waiting_queue);

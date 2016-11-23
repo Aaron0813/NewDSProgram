@@ -15,19 +15,19 @@ using namespace std;
 #define INFINITY 32767
 #define MAX_VERTEX_NUM 30
 
-//è¾¹å®šä¹‰ï¼Œå…¶ä¸­è¾¹ä¸­çš„linkæ˜¯ä¸ºé‚»æ¥é“¾è¡¨åšå‡†å¤‡
+//±ß¶¨Òå£¬ÆäÖĞ±ßÖĞµÄlinkÊÇÎªÁÚ½ÓÁ´±í×ö×¼±¸
 struct Edge {
 
-    //è¾¹çš„ç›®çš„åœ°--å­˜çš„æ˜¯ç‚¹åœ¨æ•°ç»„ä¸­çš„ä½ç½®
+    //±ßµÄÄ¿µÄµØ--´æµÄÊÇµãÔÚÊı×éÖĞµÄÎ»ÖÃ
     int dest;
-    //è¾¹çš„é•¿åº¦---å³ä¸¤ç‚¹ä¹‹é—´çš„è·ç¦»
+    //±ßµÄ³¤¶È---¼´Á½µãÖ®¼äµÄ¾àÀë
     int distance;
-    //æ™¯ç‚¹ä¹‹é—´éœ€è¦çš„æ—¶é—´
+    //¾°µãÖ®¼äĞèÒªµÄÊ±¼ä
     int time_consume;
-    //é“¾è¡¨å­˜å‚¨å…¶ä»–è¾¹
+    //Á´±í´æ´¢ÆäËû±ß
     Edge *link;
 
-    //é»˜è®¤ä¸¤ç‚¹ä¹‹é—´çš„ä¸å¯è¾¾
+    //Ä¬ÈÏÁ½µãÖ®¼äµÄ²»¿É´ï
     Edge() : distance(INFINITY), link(NULL) {}
 
     Edge(int d, int dis, int t, Edge *edge) : dest(d), distance(dis), time_consume(t), link(edge) {}
@@ -37,28 +37,28 @@ struct Edge {
     int operator!=(Edge &E) const { return dest != E.dest; }
 };
 
-//é¡¶ç‚¹å®šä¹‰
+//¶¥µã¶¨Òå
 struct Vertex {
 
     string name;
     string description;
     int popular_degree;
-    //0è¡¨ç¤ºæ²¡æœ‰ï¼Œ1è¡¨ç¤ºæœ‰
+    //0±íÊ¾Ã»ÓĞ£¬1±íÊ¾ÓĞ
     int is_toilet;
     int is_rest;
-    //ç‚¹æŒæœ‰è¾¹çš„æŒ‡é’ˆï¼Œè¿™æ ·å¯ä»¥åˆ›å»ºé‚»æ¥é“¾è¡¨
+    //µã³ÖÓĞ±ßµÄÖ¸Õë£¬ÕâÑù¿ÉÒÔ´´½¨ÁÚ½ÓÁ´±í
     Edge *adj;
 };
 
 struct Graph {
     bool is_created;
-    //èŠ‚ç‚¹çš„æ•°é‡
+    //½ÚµãµÄÊıÁ¿
     int num_vertices;
-    //è¾¹çš„æ•°é‡
+    //±ßµÄÊıÁ¿
     int num_edges;
-    //å›¾çš„é‚»æ¥é“¾è¡¨
+    //Í¼µÄÁÚ½ÓÁ´±í
     Vertex *node_table;
-    //å›¾çš„é‚»æ¥çŸ©é˜µ
+    //Í¼µÄÁÚ½Ó¾ØÕó
     double **adj_matrix;
 
     Graph(int sz) {
@@ -68,41 +68,33 @@ struct Graph {
             node_table = new Vertex[num_vertices];
             is_created = false;
         } else
-            cout << "åˆå§‹åŒ–é”™è¯¯ï¼ŒèŠ‚ç‚¹æ•°è¿‡å¤§" << endl;
+            cout << "³õÊ¼»¯´íÎó£¬½ÚµãÊı¹ı´ó" << endl;
 //        cout << "Initial Ok" << node_table[0].name << endl;
     }
 //    ~Graph();
 };
 
 
-//æœ€å°ç”Ÿæˆæ ‘è¾¹ç»“ç‚¹çš„ç»“æ„ä½“å®šä¹‰
+//×îĞ¡Éú³ÉÊ÷±ß½áµãµÄ½á¹¹Ìå¶¨Òå
 struct MSTEdgeNode {
-    int head, tail;  //ç”Ÿæˆæ ‘å„è¾¹çš„ä¸¤ä¸ªé¡¶ç‚¹
-    int cost;       //ç”Ÿæˆæ ‘å„è¾¹çš„ä»£ä»·
+    int head, tail;  //Éú³ÉÊ÷¸÷±ßµÄÁ½¸ö¶¥µã
+    int cost;       //Éú³ÉÊ÷¸÷±ßµÄ´ú¼Û
 };
 
-//æ ¹æ®é¡¶ç‚¹çš„å€¼æ‰¾åˆ°å…¶ä½ç½®
+//¸ù¾İ¶¥µãµÄÖµÕÒµ½ÆäÎ»ÖÃ
 int GetVertexPos(Graph &graph, string &name);
 
-//å°†é‚»æ¥é“¾è¡¨è½¬æ¢ä¸ºé‚»æ¥çŸ©é˜µ
+//½«ÁÚ½ÓÁ´±í×ª»»ÎªÁÚ½Ó¾ØÕó
 void ConvertToMatrix(Graph &graph);
 
-//æ·±åº¦ä¼˜å…ˆéå†ç®—æ³•-é€’å½’çš„å…¥å£å‡½æ•°
-string *DFSTraverse(Graph &graph);
-
-//æ·±åº¦ä¼˜å…ˆéå†ç®—æ³•--é€’å½’
-void DFS(Graph &graph, int v, int visited[], string *vertex, int &num);
-
-//è·å–èŠ‚ç‚¹vçš„ç¬¬ä¸€ä¸ªé‚»æ¥é¡¶ç‚¹
+//»ñÈ¡½ÚµãvµÄµÚÒ»¸öÁÚ½Ó¶¥µã
 int GetFirstNeighbor(Graph &graph, int v);
 
-//è·å–èŠ‚ç‚¹væ’åœ¨wåé¢çš„ä¸‹ä¸€ä¸ªé‚»æ¥é¡¶ç‚¹
+//»ñÈ¡½ÚµãvÅÅÔÚwºóÃæµÄÏÂÒ»¸öÁÚ½Ó¶¥µã
 int GetNextNeighbor(Graph &graph, int v, int w);
 
-//åˆ¤æ–­è¦æŸ¥çš„è¿™ä¸¤ä¸ªé¡¶ç‚¹ä¹‹é—´æ˜¯å¦æœ‰ç›´æ¥ç›¸è¿çš„è¾¹
+//ÅĞ¶ÏÒª²éµÄÕâÁ½¸ö¶¥µãÖ®¼äÊÇ·ñÓĞÖ±½ÓÏàÁ¬µÄ±ß
 bool IsEdge(Graph graph, string v1, string v2);
 
-//å…·ä½“è®¡ç®—é¡¶ç‚¹vä¸wä¹‹é—´çš„æœ€çŸ­è·¯å¾„åŠè·ç¦»çš„ç®—æ³•---DIJKSTRA
-void Dijkstra(Graph &graph, int v, int w);
 
 #endif //NEWDSPROGRAM_GRAPH_H

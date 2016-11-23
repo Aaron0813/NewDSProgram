@@ -73,7 +73,7 @@ bool QueuePop(CarQueue &carQueue, CarInfo &carInfo) {
         carQueue.current_size--;
         return true;
     } else {
-        cout << "队列已空，无法进行出队操作" << endl;
+//        cout << "队列已空，无法进行出队操作" << endl;
         return false;
     }
 
@@ -107,12 +107,12 @@ void EnterParking(CarStack &parking_stack, CarQueue &waiting_queue) {
 //    cout << arrive_time << endl;
 
     if (parking_stack.top < PARK_MAX_SIZE - 1) {//停车场还有空位
-        cout << "还有空" << endl;
+//        cout << "还有空" << endl;
         StackPush(parking_stack, carInfo);
         cout << "车牌号为 " << carInfo.number << "的汽车已经进入停车场，位于 "
              << parking_stack.top + 1 << "号车道" << endl;
     } else {
-        cout << "车多了" << endl;
+//        cout << "车多了" << endl;
         QueuePush(waiting_queue, carInfo);
         cout << "因为停车场已满， 车牌号为 " << carInfo.number << "的汽车停于便道的"
              << waiting_queue.current_size << "个位置上" << endl;
@@ -136,23 +136,37 @@ void DepartParking(CarStack &parking_stack, CarStack &temp_parking_stack, CarQue
         while (temp.number != car_number) {
             if (parking_stack.top == -1) {//没有找到要出来的车
                 cout << "请确认你的车确实在这个停车场!!!" << endl;
+                StackPush(temp_parking_stack, temp);
                 while (temp_parking_stack.top != -1) {//把临时停车场的车全部倒回去---简直跟傻逼一样这个停车场设计
                     StackPop(temp_parking_stack, temp);
                     StackPush(parking_stack, temp);
                 }
+                cout << "当前的停车场车辆数量为" << parking_stack.top + 1 << endl;
                 return;
             }
             StackPush(temp_parking_stack, temp);
             StackPop(parking_stack, temp);
         }
+        /////////////////////////////////////////
+        static char str_time[100];
+        struct tm *local_time = NULL;
+
 
         money = depart_time - temp.time;
         cout << "车牌号为 " << car_number << "的车已经离去，以下为收据" << endl;
         cout << "=================================收据=====================================" << endl;
-        cout << "车牌号\t" << "进入停车场时间\t" << "离开停车场时间\t" << "停留时间\t" << "缴费金额" << endl;
-        cout << "--------------------------------------------------------------------------" << endl;
-        cout << car_number << "\t" << temp.time << "\t" << depart_time << "\t" << depart_time - temp.time
-             << "\t" << money << endl;
+        cout << "车牌号:\t" << car_number << endl;
+
+        local_time = localtime(&temp.time);
+        strftime(str_time, sizeof(str_time), "%Y-%m-%d,%H:%M:%S", local_time);
+        printf("进入停车场时间: %s \n", str_time);
+
+        local_time = localtime(&depart_time);
+        strftime(str_time, sizeof(str_time), "%Y-%m-%d,%H:%M:%S", local_time);
+        printf("离开停车场时间: %s\n", str_time);
+
+        cout << "缴费金额" << money << "元" << endl;
+        ////////////////////////////////////////
         while (temp_parking_stack.top != -1) {//把临时停车场的车全部倒回去---简直跟傻逼一样这个停车场设计
             StackPop(temp_parking_stack, temp);
             StackPush(parking_stack, temp);
