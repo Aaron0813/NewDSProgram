@@ -5,7 +5,7 @@
 #include <cstring>
 #include <windows.h>
 #include <stdio.h>
-#include "preDefine.h"
+#include "function.h"
 
 
 void ShowMenu(Graph &graph) {

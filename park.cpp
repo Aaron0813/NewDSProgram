@@ -76,7 +76,6 @@ bool QueuePop(CarQueue &carQueue, CarInfo &carInfo) {
 //        cout << "队列已空，无法进行出队操作" << endl;
         return false;
     }
-
 }
 
 //汽车进入停车场
@@ -186,7 +185,6 @@ void DepartParking(CarStack &parking_stack, CarStack &temp_parking_stack, CarQue
 
 
 void Park() {
-//    CarNumBook carNumBook;
     CarStack parking_stack, temp_parking_stack;
     CarQueue waiting_queue;
     StackInit(parking_stack);

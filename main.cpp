@@ -1,5 +1,5 @@
 #include <iostream>
-#include "preDefine.h"
+#include "function.h"
 
 int main() {
 //    Graph graph(12), ;

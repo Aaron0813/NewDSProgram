@@ -3,5 +3,5 @@ project(NewDSProgram)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp preDefine.h function.cpp park.h park.cpp graph.h graph.cpp myAlgorithm.h myAlgorithm.cpp)
+set(SOURCE_FILES main.cpp function.h function.cpp park.h park.cpp graph.h graph.cpp myAlgorithm.h myAlgorithm.cpp)
 add_executable(NewDSProgram ${SOURCE_FILES})
