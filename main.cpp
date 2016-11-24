@@ -6,6 +6,7 @@ int main() {
     Graph graph(12);
 //    Graph new_graph(8);
 
+//    ShowMenu(new_graph);
     ShowMenu(graph);
 //    LoadGraph(graph);
 //    OutputAdjMatrix(graph);

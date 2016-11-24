@@ -23,7 +23,7 @@ using namespace std;
 void ShowMenu(Graph &graph);
 
 //加载图的信息
-void LoadGraph(Graph &graph);
+void LoadGraph(Graph &graph, string vertex_txt, string route_txt);
 
 //求两个景点之间的最短路径及其距离
 void MiniDistance(Graph &graph);
@@ -37,10 +37,8 @@ void OutputSortResult(Graph &graph, SortNode sortNodes[]);
 //输出导游路线图
 void CreateTourSortGraph(Graph &graph);
 
-
 //根据深度优先遍历的结果创建一个图--暂时不写
 void CreateTourGraph(Graph &graph, Graph &tour_graph, string tour_map[]);
-
 
 //排序功能的主函数入口
 void Sort(Graph &graph);

@@ -32,7 +32,8 @@ void ShowMenu(Graph &graph) {
         cout << "10.退出系统" << endl;
         cin >> choose;
         if ("1" == choose) {
-            LoadGraph(graph);
+            LoadGraph(graph, "vertexes.txt", "routes.txt");
+//            LoadGraph(graph,"new_vertexes.txt","new_routes.txt");
         } else if ("2" == choose) {
             if (graph.is_created) {
                 OutputAdjMatrix(graph);
@@ -97,16 +98,18 @@ void ShowMenu(Graph &graph) {
  * 加载图的相关信息
  * @param graph
  */
-void LoadGraph(Graph &graph) {
+void LoadGraph(Graph &graph, string vertex_txt, string route_txt) {
     //存入节点信息
-    string filename = "vertexes.txt";
+//    string filename = "vertexes.txt";
 //    string filename = "new_vertexes.txt";
-    ifstream inf1(filename.c_str());
+    ifstream inf1(vertex_txt.c_str());
     int i = 0, j;
     while (inf1.good()) {
         ////不能够直接通过引用写入数据，待查---已改正，数组越界
         inf1 >> graph.node_table[i].name >> graph.node_table[i].description >> graph.node_table[i].popular_degree
              >> graph.node_table[i].is_toilet >> graph.node_table[i].is_rest;
+        //困扰了很久，原来是因为一开始地址没有对其进行初始化
+        graph.node_table[i].adj = NULL;
         i++;
     }
 //    graph.num_vertices=i+1;
@@ -120,9 +123,9 @@ void LoadGraph(Graph &graph) {
     }
 
     //存入路径信息
-    filename = "routes.txt";
+//    filename = "routes.txt";
 //    filename = "new_routes.txt";
-    ifstream inf2(filename.c_str());
+    ifstream inf2(route_txt.c_str());
     string from, to;
     int timeFee = 0, distance = 0;
     while (inf2.good()) {
@@ -134,6 +137,8 @@ void LoadGraph(Graph &graph) {
         //创建边信息并赋值
         Edge *P = new Edge(j, distance, timeFee);
         Edge *Q = new Edge(i, distance, timeFee);
+        /**段错误的缘由应该在这里
+         * */
         P->link = graph.node_table[i].adj;//第一次P被复制为NULL，但后面几次就会不断的加到结点的前面
         graph.node_table[i].adj = P;
 
@@ -155,12 +160,22 @@ void LoadGraph(Graph &graph) {
 //    cout << "111  num vertexes   " << graph.num_vertices << endl;
     int num_vertices = graph.num_vertices;
     Edge *edge;
+    int temp;
     for (i = 0; i < num_vertices; i++) {
-        cout << graph.node_table[i].name << "\t";
-        for (edge = graph.node_table[i].adj; edge; edge = edge->link) {//遍历某一个节点的所有邻接节点信息
-            cout << graph.node_table[edge->dest].name << "\t";
+        cout << graph.node_table[i].name << endl;
+        for (edge = graph.node_table[i].adj; edge->link != NULL; edge = edge->link) {//遍历某一个节点的所有邻接节点信息
+//            cout<<"Just a test"<<endl;
+            temp = edge->dest;
+            cout << graph.node_table[temp].name << "\t";
         }
+//        edge = graph.node_table[i].adj;
+//        while(edge){
+//            temp=edge->dest;
+//            cout << graph.node_table[temp].name << "\t";
+//            edge = edge->link;
+//        }
         cout<<endl;
+
     }
     ///////////////////////////////////////////////
 //    cout<<graph.node_table[5].name<<endl;
@@ -273,8 +288,9 @@ void FindInDegree(Graph graph, int indegree[]) {
 
 //查找一张图中是否有回路
 void FindLoop(Graph &graph) {
-
-
+    //加载新图
+    LoadGraph(graph, "new_vertexes.txt", "new_routes.txt");
+    OutputAdjMatrix(graph);
     cout << "找出回路成功" << endl;
 }
 
