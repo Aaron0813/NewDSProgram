@@ -184,35 +184,7 @@ void DepartParking(CarStack &parking_stack, CarStack &temp_parking_stack, CarQue
 }
 
 
-void Park() {
-    CarStack parking_stack, temp_parking_stack;
-    CarQueue waiting_queue;
-    StackInit(parking_stack);
-    StackInit(temp_parking_stack);
-    QueueInit(waiting_queue);
-    bool flag = true;
-    while (flag) {
-        string choose;
-        cout << "**             ** 停车场管理程序                 **" << endl;
-        cout << "===================================================" << endl;
-        cout << "**                                               **" << endl;
-        cout << "**   A --- 汽车 进 车场   D --- 汽车 出 车场     **" << endl;
-        cout << "**                                               **" << endl;
-        cout << "**           E --- 退出   程序                   **" << endl;
-        cout << "===================================================" << endl;
-        cout << "请选择 :(A,D,E): ";
-        cin >> choose;
-        if ("A" == choose) {
-            EnterParking(parking_stack, waiting_queue);
-        } else if ("D" == choose) {
-            DepartParking(parking_stack, temp_parking_stack, waiting_queue);
-        } else if ("E" == choose) {
-            flag = false;
-        } else {
-            cout << "输入有误，请重新输入" << endl;
-        }
-    }
-}
+
 
 
 

@@ -34,8 +34,11 @@ void OutputAdjMatrix(Graph &graph);
 //输出排序结果的函数
 void OutputSortResult(Graph &graph, SortNode sortNodes[]);
 
+//创建导游路线图
+string *CreateTourSortGraph(Graph &graph, int &count);
+
 //输出导游路线图
-void CreateTourSortGraph(Graph &graph);
+void OutputTourGraph(string tour_map[], int n);
 
 //根据深度优先遍历的结果创建一个图--暂时不写
 void CreateTourGraph(Graph &graph, Graph &tour_graph, string tour_map[]);

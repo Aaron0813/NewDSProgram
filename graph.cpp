@@ -32,7 +32,7 @@ void ConvertToMatrix(Graph &graph) {
     Edge *edge = new Edge;
     for (i = 0; i < num_vertices; i++)
         for (edge = graph.node_table[i].adj; edge; edge = edge->link) {//遍历某一个节点的所有邻接节点信息
-            cout << edge << endl;
+//            cout << edge << endl;
             j = edge->dest;
             a[i][j] = edge->distance;
 //            cout<<i<<endl;
