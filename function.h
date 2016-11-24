@@ -25,6 +25,12 @@ void ShowMenu(Graph &graph);
 //加载图的信息
 void LoadGraph(Graph &graph, string vertex_txt, string route_txt);
 
+//输出存储之后的节点信息
+void OutputLoadNodeInfo(Graph &graph, int n);
+
+//输出存储之后的路径信息
+void OutputLoadRouteInfo(Graph &graph);
+
 //求两个景点之间的最短路径及其距离
 void MiniDistance(Graph &graph);
 

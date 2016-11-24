@@ -33,6 +33,8 @@ void ShowMenu(Graph &graph) {
         cin >> choose;
         if ("1" == choose) {
             LoadGraph(graph, "vertexes.txt", "routes.txt");
+            OutputLoadNodeInfo(graph, graph.num_vertices);
+            OutputLoadRouteInfo(graph);
 //            LoadGraph(graph,"new_vertexes.txt","new_routes.txt");
         } else if ("2" == choose) {
             if (graph.is_created) {
@@ -102,8 +104,6 @@ void ShowMenu(Graph &graph) {
  */
 void LoadGraph(Graph &graph, string vertex_txt, string route_txt) {
     //存入节点信息
-//    string filename = "vertexes.txt";
-//    string filename = "new_vertexes.txt";
     ifstream inf1(vertex_txt.c_str());
     int i = 0, j;
     while (inf1.good()) {
@@ -114,15 +114,11 @@ void LoadGraph(Graph &graph, string vertex_txt, string route_txt) {
         graph.node_table[i].adj = NULL;
         i++;
     }
-//    graph.num_vertices=i+1;
     inf1.close();
 
     /**
      * 测试节点信息是否存入正确*/
-    cout << "景点信息录入成功:" << endl;
-    for (int m = 0; m < i; m++) {
-        cout << m << "\t" << (graph.node_table[m].name) << "\t" << (graph.node_table[m].description) << "\t" << endl;
-    }
+
 
     //存入路径信息
 //    filename = "routes.txt";
@@ -150,20 +146,23 @@ void LoadGraph(Graph &graph, string vertex_txt, string route_txt) {
     }
 
     inf2.close();
+}
 
+//输出存储之后的节点信息
+void OutputLoadNodeInfo(Graph &graph, int n) {
+    cout << "景点信息录入成功:" << endl;
+    for (int m = 0; m < n; m++) {
+        cout << m << "\t" << (graph.node_table[m].name) << "\t" << (graph.node_table[m].description) << "\t" << endl;
+    }
+}
 
-    /**
-      * 测试路径信息是否存入正确--应该是正确的-----一定要注意相关的编码要统一啊*/
+//输出存储之后的路径信息
+void OutputLoadRouteInfo(Graph &graph) {
     cout << endl << endl << "路径信息录入成功,以下为相邻景点的信息:" << endl;
-//    for (int m = 0; m < graph.num_vertices; m++) {
-//        cout << (graph.node_table[m].adj->dest) << " " << (graph.node_table[m].adj->distance) << endl;
-//        }
-
-//    cout << "111  num vertexes   " << graph.num_vertices << endl;
     int num_vertices = graph.num_vertices;
     Edge *edge;
     int temp;
-    for (i = 0; i < num_vertices; i++) {
+    for (int i = 0; i < num_vertices; i++) {
         cout << graph.node_table[i].name << "\t";
         for (edge = graph.node_table[i].adj; edge->link != NULL; edge = edge->link) {//遍历某一个节点的所有邻接节点信息
             temp = edge->dest;
@@ -172,18 +171,9 @@ void LoadGraph(Graph &graph, string vertex_txt, string route_txt) {
         cout << endl;
 
     }
-    ///////////////////////////////////////////////
-//    cout<<graph.node_table[5].name<<endl;
-//    Edge *edge;
-//    for(edge=graph.node_table[5].adj;edge;edge=edge->link){//遍历某一个节点的所有邻接节点信息
-//            cout<<graph.node_table[edge->dest].name<<"  ";
-//        }
-//    cout<<"end"<<endl;
-
     //标记图已经被成功创建
     graph.is_created = true;
     cout << endl << endl << "图已经创建成功" << endl;
-
 }
 
 
@@ -296,58 +286,20 @@ void FindLoop(Graph &graph) {
         if (final_tour_map[j - 1] == final_tour_map[j + 1]) {
             string start = final_tour_map[j];
             temp.push(start);
-//            temp.push(final_tour_map[j])
-//            cout<<"压站成功：："<<temp.top()<<"  "<<endl;
             for (int m = j + 1; m < count; m++) {
                 string endView = final_tour_map[m];
-//                cout<<endView<<endl;
                 if (IsEdge(graph, start, endView)) {
-//                    cout<<endView<<"  右边，哈哈哈"<<endl;
                     temp.push(endView);
                 }
-
             }
         }
     }
-    cout << "回路为 ：" << endl;
+    cout << "回路为 ：" << endl << endl;
     while (!temp.empty()) {
-//        string circle=temp.pop();
         cout << temp.top() << "   ";
         temp.pop();
     }
     cout << endl;
-//    string temp[count];
-//    stack<string> circle;
-//    for(int i=0;i<count;i++){
-//        int j=0;
-//        int flag=0;
-//        for(;j<i;j++){
-//            if(final_tour_map[i]==temp[j]){
-//                flag=1;
-//                break;
-//            }
-//        }
-//        if(flag==1){
-//            for(int m=j;m<i;m++){
-//                string tempString=temp[m];
-//                circle.push(tempString);
-//                temp[m]="";
-//            }
-//        } else{
-//            temp[i]=final_tour_map[i];
-//            cout<<final_tour_map[i]<<"  "<<temp[i]<<endl;
-//        }
-//
-//    }
-
-//    cout<<"回路为:"<<endl;
-//    while(!circle.empty()){
-//        cout<<circle.top()<<" ";
-//        circle.pop();
-//    }
-
-
-//    cout << "找出回路成功" << endl;
 }
 
 void MiniDistance(Graph &graph) {
